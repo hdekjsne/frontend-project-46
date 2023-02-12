@@ -12,7 +12,7 @@ export function fullKeyListCostructor(obj1, obj2) {
       return key;
     }
   }).filter((key) => key !== undefined ? true : false));
-  return commonKeysList.flat();
+  return commonKeysList.flat().sort();
 }
 
 export default function gendiff(path1, path2) {

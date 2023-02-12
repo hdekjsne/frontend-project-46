@@ -1,3 +1,4 @@
+
 import { fullKeyListCostructor } from "../bin/gendiff.js"
 
 const file1 = {
@@ -13,4 +14,8 @@ const file2 = {
   "host": "hexlet.io"
 }
 
-console.log(fullKeyListCostructor(file1, file2));
+test('check fullKeyListConstructor', () => {
+  expect(fullKeyListCostructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
+  expect(fullKeyListCostructor(file2, file1)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
+  expect(fullKeyListCostructor([], [])).toEqual([]);
+});
