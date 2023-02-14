@@ -1,6 +1,5 @@
-
-import { fullKeyListCostructor, makeArrLookLikeObj } from "../bin/gendiff.js";
-import gendiff from '../bin/gendiff.js';
+import { fullKeyListCostructor, makeArrLookLikeObj } from "../src/additional.js";
+import gendiff from '../src/index.js';
 
 const file1 = {
   "host": "hexlet.io",
@@ -37,9 +36,9 @@ test('check makeArrLookLikeObj', () => {
     ['not a string', 2],
     ['basket', ['eggs', 'milk', 'vinegar']]
   ];
-  const str = `aaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: ${['eggs', 'milk', 'vinegar']}`;
+  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: ${['eggs', 'milk', 'vinegar']}\n}`;
   expect(makeArrLookLikeObj(arr)).toEqual(str);
-  expect(makeArrLookLikeObj([])).toEqual('');
+  expect(makeArrLookLikeObj([])).toEqual('{\n\n}');
 });
 
 test('check gendiff', () => {
