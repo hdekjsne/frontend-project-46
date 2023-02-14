@@ -1,10 +1,10 @@
-import * as fs from 'node:fs';
 import { cwd } from 'node:process';
+import path from 'node:path';
 import _ from 'lodash';
 
-export function makeAbsolutePath(path) {
+export function makeAbsolutePath(route) {
   const curDir = cwd().includes('\\') ? cwd().split('\\') : cwd().split('/'); // arr from path
-  const splittedPath = path.icludes('\\') ? path.split('\\') : path.split('/'); // arr from path
+  const splittedPath = route.includes('\\') ? route.split('\\') : route.split('/'); // arr from path
   const curDirFiltered = curDir.filter((str) => !splittedPath.includes(str) ? true : false);
   const result = path.resolve(curDirFiltered.join('/'), splittedPath.join('/'));
   return result;
