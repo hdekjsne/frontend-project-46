@@ -10,6 +10,24 @@ export default function gendiff(path1, path2) {
   const parsedData1 = JSON.parse(data1);
   const parsedData2 = JSON.parse(data2);
   const keys = fullKeyListCostructor(parsedData1, parsedData2);
+  /*
+  const resultEntries = keys.map((key) => {
+    if (!Object.hasOwn(parsedData1, key)) {
+      const strKey = `  + ${key}`;
+      return [strKey, parsedData2[key]];
+    } else if (!Object.hasOwn(parsedData2, key)) {
+      const strKey = `  - ${key}`;
+      return [strKey, parsedData1[key]];
+    } else if (!_.isEqual(parsedData1[key], parsedData2[key])) {
+      const strKey1 = `  - ${key}`;
+      const strKey2 = `  + ${key}`;
+      return [strKey1, parsedData1[key]], [strKey2, parsedData2[key]]; // trouble here
+    } else {
+      const strKey = `    ${key}`
+      return [strKey, parsedData1[key]];
+    }
+  });
+  */
   const resultEntries = [];
   for (const key of keys) {
     if (!Object.hasOwn(parsedData1, key)) {
