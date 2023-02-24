@@ -15,4 +15,5 @@ program
     console.log(gendiff(path1, path2))
   })
 
+/* eslint-disable-next-line */
 program.parse(process.argv)
