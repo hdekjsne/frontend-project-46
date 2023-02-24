@@ -44,5 +44,5 @@ test('check makeArrLookLikeObj', () => {
 });
 
 test('check gendiff', () => {
-  expect(gendiff('__tests__/file1.json', '__tests__/file2.json')).toEqual(example);
+  expect(gendiff('__fixtures__/file1.json', '__fixtures__/file2.json')).toEqual(example);
 });
