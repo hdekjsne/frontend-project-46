@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { fullKeyListCostructor, makeArrLookLikeObj } from "../src/additional.js";
 import gendiff from '../src/index.js';
 
