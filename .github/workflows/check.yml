@@ -13,4 +13,4 @@ jobs:
       - run: npm install jest
       - run: npm install commander
       - run: npm install lodash
-      - run: make test
+      - run: npm test
