@@ -1,4 +1,4 @@
-name: lint
+name: lint and tests
 on: push
 jobs:
   lint:
