@@ -1,7 +1,6 @@
 name: lint and tests
 on: push
 jobs:
-  ID: CC_ID
   lint:
     runs-on: ubuntu-latest
     steps:
