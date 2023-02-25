@@ -1,6 +1,7 @@
 name: lint and tests
 on: push
 jobs:
+  ID: CC_ID
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -14,3 +15,9 @@ jobs:
       - run: npm install commander
       - run: npm install lodash
       - run: npm test
+      - uses: paambaati/codeclimate-action@v3.0.0
+        env: 
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_ID }}
+        with:
+          coverageCommand: make test-coverage
+          debug: true
