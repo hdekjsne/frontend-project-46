@@ -1,0 +1,8 @@
+day: Tue
+weather:
+  - freezy
+  - snowy
+  - cloudy
+temperature:
+  min: !!int -5
+  max: !!int 1

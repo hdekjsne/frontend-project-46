@@ -1,4 +1,5 @@
 import { fullKeyListCostructor, makeArrLookLikeObj } from "../src/utils.js";
+import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
 
 const file1 = {
@@ -14,6 +15,15 @@ const file2 = {
   "host": "hexlet.io"
 }
 
+const file3 = {
+  "day": "Tue",
+  "weather": ["freezy", "snowy", "cloudy"],
+  "temperature": {
+    "min": -5,
+    "max": 1
+  }
+}
+
 const example = `{
   - follow: false
     host: hexlet.io
@@ -22,6 +32,10 @@ const example = `{
   + timeout: 20
   + verbose: true
 }`
+
+test('check parser', () => {
+  expect(parser('__fixtures__/file3.yml')).toEqual(file3);
+});
 
 test('check fullKeyListConstructor', () => {
   expect(fullKeyListCostructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
