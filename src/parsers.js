@@ -1,4 +1,4 @@
-import load from 'js-yaml';
+const yaml = require('js-yaml');
 import * as fs from 'node:fs';
 import { makeAbsolutePath } from './utils.js';
 
