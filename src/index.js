@@ -1,15 +1,12 @@
 import * as fs from 'node:fs';
 import _ from 'lodash';
-import { makeAbsolutePath, fullKeyListCostructor, makeArrLookLikeObj } from './additional.js';
+import { makeAbsolutePath, fullKeyListCostructor, makeArrLookLikeObj } from './utils.js';
+import { parse } from './parsers.js';
 
 export default function gendiff(path1, path2) {
-  const absPath1 = makeAbsolutePath(path1);
-  const absPath2 = makeAbsolutePath(path2);
-  const data1 = fs.readFileSync(absPath1, 'utf-8');
-  const data2 = fs.readFileSync(absPath2, 'utf-8');
-  const parsedData1 = JSON.parse(data1);
-  const parsedData2 = JSON.parse(data2);
-  const keys = fullKeyListCostructor(parsedData1, parsedData2);
+  const data1 = parse(path1);
+  const data2 = parse(path2);
+  const keys = fullKeyListCostructor(data1, data2);
   /*
   const resultEntries = keys.map((key) => {
     if (!Object.hasOwn(parsedData1, key)) {
