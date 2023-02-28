@@ -4,7 +4,7 @@ import { makeAbsolutePath } from './utils.js';
 
 function yamlParser(path) {
   const data = fs.readFileSync(path, 'utf-8');
-  const result = load(data);
+  const result = yaml.load(data);
   return result;
 }
 
