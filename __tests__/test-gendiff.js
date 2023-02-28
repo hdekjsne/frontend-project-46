@@ -34,7 +34,7 @@ const example = `{
 }`
 
 test('check parser', () => {
-  expect(parser('__fixtures__/file3.yml')).toEqual(file3);
+  expect(parse('__fixtures__/file3.yml')).toEqual(file3);
 });
 
 test('check fullKeyListConstructor', () => {
