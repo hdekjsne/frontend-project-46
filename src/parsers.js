@@ -24,6 +24,10 @@ export function parse(path) {
       data = yamlParser(absPath);
       break;
     
+    case 'yaml':
+      data = yamlParser(absPath);
+      break;
+    
     default:
       data = jsonParser(absPath);
   }
