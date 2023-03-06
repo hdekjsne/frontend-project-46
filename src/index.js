@@ -1,6 +1,6 @@
 // import * as fs from 'node:fs';
 import _ from 'lodash';
-import { fullKeyListCostructor, makeArrLookLikeObj } from './utils.js';
+import { fullKeyListConstructor, makeArrLookLikeObj } from './utils.js';
 import { parse } from './parsers.js';
 
 function makeTree(data1, data2, repeat = 1) {
@@ -8,9 +8,9 @@ function makeTree(data1, data2, repeat = 1) {
   const lines = keys.map((key) => {
     const gap = '  ';
     if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) { // deleted
-      return `${gap.repeat(repeat - 1)}- ${key}: ${value}`;
+      return `${gap.repeat(repeat - 1)}- ${key}: ${data1.key}`;
     } else if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { // added
-      return `${gap.repeat(repeat - 1)}+ ${key}: ${value}`;
+      return `${gap.repeat(repeat - 1)}+ ${key}: ${data2.key}`;
     } else if (data1.key !== data2.key) { // changed
       if ((_.isObject(data1.key) && !_.isArray(data1.key)) && (_.isObject(data2.key) && !_.isArray(data2.key))) { // both are objects
         return `${gap.repeat(repeat)}${makeTree(data1.key, data2.key, repeat + 1)}`;

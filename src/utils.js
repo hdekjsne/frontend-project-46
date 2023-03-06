@@ -10,7 +10,7 @@ export function makeAbsolutePath(route) {
   return result;
 }
 
-export function fullKeyListCostructor(obj1, obj2) {
+export function fullKeyListConstructor(obj1, obj2) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
   const commonKeysList = keys1.map((key) => key);

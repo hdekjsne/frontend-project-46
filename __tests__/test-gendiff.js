@@ -1,4 +1,4 @@
-import { fullKeyListCostructor, makeArrLookLikeObj } from "../src/utils.js";
+import { fullKeyListConstructor, makeArrLookLikeObj } from "../src/utils.js";
 import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
 
@@ -83,17 +83,17 @@ test('check parser', () => {
 });
 
 test('check fullKeyListConstructor', () => {
-  expect(fullKeyListCostructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
-  expect(fullKeyListCostructor(file2, file1)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
-  expect(fullKeyListCostructor([], [])).toEqual([]);
+  expect(fullKeyListConstructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
+  expect(fullKeyListConstructor(file2, file1)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
+  expect(fullKeyListConstructor([], [])).toEqual([]);
 });
 
 test('check makeArrLookLikeObj', () => {
   const arr = [
-    ['aaaaaa', 'aaaaaaaaaaaa'],
-    ['question', 'a?'],
-    ['not a string', 2],
-    ['basket', ['eggs', 'milk', 'vinegar']]
+    'aaaaaa: aaaaaaaaaaaa',
+    'question: a?',
+    'not a string: 2,
+    'basket: [\'eggs\', \'milk\', \'vinegar\']'
   ];
   const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: ${['eggs', 'milk', 'vinegar']}\n}`;
   expect(makeArrLookLikeObj(arr)).toEqual(str);
