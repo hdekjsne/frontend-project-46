@@ -28,6 +28,7 @@ export function makeArrLookLikeObj(arrOfArrs) {
     if (_.isArray(line)) {
       return makeArrLookLikeObj(line);
     }
+    return line;
   });
   const result = `{\n${copy.join('\n')}}`;
   return result;
