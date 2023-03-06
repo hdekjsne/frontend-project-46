@@ -30,6 +30,6 @@ export function makeArrLookLikeObj(arrOfArrs) {
     }
     return line;
   });
-  const result = `{\n${copy.join('\n')}}`;
+  const result = `{\n${copy.join('\n')}\n}`;
   return result;
 }

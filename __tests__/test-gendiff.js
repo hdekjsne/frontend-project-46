@@ -92,10 +92,10 @@ test('check makeArrLookLikeObj', () => {
   const arr = [
     'aaaaaa: aaaaaaaaaaaa',
     'question: a?',
-    'not a string: ${2}',
-    'basket: [\'eggs\', \'milk\', \'vinegar\']'
+    `not a string: ${2}`,
+    'basket: \'eggs\', \'milk\', \'vinegar\''
   ];
-  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: ${['eggs', 'milk', 'vinegar']}\n}`;
+  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: \'eggs\', \'milk\', \'vinegar\'\n}`;
   expect(makeArrLookLikeObj(arr)).toEqual(str);
   expect(makeArrLookLikeObj([])).toEqual('{\n\n}');
 });

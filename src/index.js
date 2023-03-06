@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { fullKeyListConstructor, makeArrLookLikeObj } from './utils.js';
 import { parse } from './parsers.js';
 
-function makeTree(data1, data2, repeat = 1) {
+function makeTree(data1, data2, repeat = 2) {
   const keys = fullKeyListConstructor(data1, data2);
   const lines = keys.map((key) => {
     const gap = '  ';
