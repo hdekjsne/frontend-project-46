@@ -13,7 +13,7 @@ function makeTree(data1, data2, repeat = 2) {
       return `${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`;
     } else if (data1[key] !== data2[key]) { // changed
       if ((_.isObject(data1[key]) && !_.isArray(data1[key])) && (_.isObject(data2[key]) && !_.isArray(data2[key]))) { // both are objects
-        return `${gap.repeat(repeat)}${makeTree(data1[key], data2[key], repeat + 1)}`;
+        return `${gap.repeat(repeat - 1)}${key}: ${makeTree(data1[key], data2[key], repeat + 1)}`;
       } else if (_.isArray(data1[key]) || _.isArray(data2[key])) { // there are arrays
         if (_.isEqual(data1[key], data2[key])) {
           return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
@@ -24,7 +24,7 @@ function makeTree(data1, data2, repeat = 2) {
     }
     return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
   });
-  return makeArrLookLikeObj(lines).trim();
+  return makeArrLookLikeObj(lines, repeat - 1).trim();
 }
 
 export default function gendiff(path1, path2) {
@@ -68,3 +68,5 @@ export default function gendiff(path1, path2) {
   */
   return makeTree(data1, data2, 2);
 }
+
+console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));

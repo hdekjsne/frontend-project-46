@@ -22,7 +22,7 @@ export function fullKeyListConstructor(obj1, obj2) {
   return commonKeysList.flat().sort();
 }
 
-export function makeArrLookLikeObj(arrOfArrs) {
+export function makeArrLookLikeObj(arrOfArrs, repeat) {
   let copy = _.cloneDeep(arrOfArrs);
   copy = copy.map((line) => {
     if (_.isArray(line)) {
@@ -30,6 +30,7 @@ export function makeArrLookLikeObj(arrOfArrs) {
     }
     return line;
   });
-  const result = `{\n${copy.join('\n')}\n}\n`;
+  const gap = '  ';
+  const result = `{\n${copy.join('\n')}\n${gap.repeat(repeat)}}\n`;
   return result;
 }
