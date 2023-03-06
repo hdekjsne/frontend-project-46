@@ -8,21 +8,21 @@ function makeTree(data1, data2, repeat = 2) {
   const lines = keys.map((key) => {
     const gap = '  ';
     if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) { // deleted
-      return `${gap.repeat(repeat - 1)}- ${key}: ${data1.key}`;
+      return `${gap.repeat(repeat - 1)}- ${key}: ${data1[key]}`;
     } else if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { // added
-      return `${gap.repeat(repeat - 1)}+ ${key}: ${data2.key}`;
-    } else if (data1.key !== data2.key) { // changed
-      if ((_.isObject(data1.key) && !_.isArray(data1.key)) && (_.isObject(data2.key) && !_.isArray(data2.key))) { // both are objects
-        return `${gap.repeat(repeat)}${makeTree(data1.key, data2.key, repeat + 1)}`;
-      } else if (_.isArray(data1.key) || _.isArray(data2.key)) { // there are arrays
-        if (_.isEqual(data1.key, data2.key)) {
-          return `${gap.repeat(repeat)}${key}: ${data1.key}`;
+      return `${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`;
+    } else if (data1[key] !== data2[key]) { // changed
+      if ((_.isObject(data1[key]) && !_.isArray(data1[key])) && (_.isObject(data2[key]) && !_.isArray(data2[key]))) { // both are objects
+        return `${gap.repeat(repeat)}${makeTree(data1[key], data2[key], repeat + 1)}`;
+      } else if (_.isArray(data1[key]) || _.isArray(data2[key])) { // there are arrays
+        if (_.isEqual(data1[key], data2[key])) {
+          return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
         }
-        return `${gap.repeat(repeat - 1)}+ ${key}: ${data1.key}\n${gap.repeat(repeat - 1)}- ${key}: ${data2.key}`;
+        return `${gap.repeat(repeat - 1)}+ ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}- ${key}: ${data2[key]}`;
       }
-      return `${gap.repeat(repeat - 1)}+ ${key}: ${data1.key}\n${gap.repeat(repeat - 1)}- ${key}: ${data2.key}`;
+      return `${gap.repeat(repeat - 1)}+ ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}- ${key}: ${data2[key]}`;
     }
-    return `${gap.repeat(repeat)}${key}: ${data1.key}`;
+    return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
   });
   return makeArrLookLikeObj(lines);
 }
