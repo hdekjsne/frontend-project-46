@@ -95,9 +95,9 @@ test('check makeArrLookLikeObj', () => {
     `not a string: ${2}`,
     'basket: \'eggs\', \'milk\', \'vinegar\''
   ];
-  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: \'eggs\', \'milk\', \'vinegar\'\n}`;
+  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: \'eggs\', \'milk\', \'vinegar\'\n}\n`;
   expect(makeArrLookLikeObj(arr)).toEqual(str);
-  expect(makeArrLookLikeObj([])).toEqual('{\n\n}');
+  expect(makeArrLookLikeObj([])).toEqual('{\n\n}\n');
 });
 
 test('check gendiff', () => {
