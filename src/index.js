@@ -3,28 +3,30 @@ import _ from 'lodash';
 import { fullKeyListConstructor, makeArrLookLikeObj } from './utils.js';
 import { parse } from './parsers.js';
 
-function makeTree(data1, data2, repeat = 2) {
+function makeTree(data1, data2, repeat = 1) {
   const keys = fullKeyListConstructor(data1, data2);
   const lines = keys.map((key) => {
     const gap = '  ';
     if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) { // deleted
-      return `${gap.repeat(repeat - 1)}- ${key}: ${data1[key]}`;
+    return `${gap.repeat(repeat)}- ${key}: ${data1[key]}`;
     } else if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { // added
-      return `${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`;
+      return `${gap.repeat(repeat)}+ ${key}: ${data2[key]}`;
     } else if (data1[key] !== data2[key]) { // changed
       if ((_.isObject(data1[key]) && !_.isArray(data1[key])) && (_.isObject(data2[key]) && !_.isArray(data2[key]))) { // both are objects
-        return `${gap.repeat(repeat - 1)}${key}: ${makeTree(data1[key], data2[key], repeat + 1)}`;
+        const value1 = _.cloneDeep(data1[key]);
+        const value2 = _.cloneDeep(data2[key]);
+        return `${gap.repeat(repeat)}${key}: ${makeTree(value1, value2, repeat + 1)}`; // !!
       } else if (_.isArray(data1[key]) || _.isArray(data2[key])) { // there are arrays
         if (_.isEqual(data1[key], data2[key])) {
           return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
         }
-        return `${gap.repeat(repeat - 1)}- ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`; // !!
+        return `${gap.repeat(repeat)}- ${key}: ${data1[key]}\n${gap.repeat(repeat)}+ ${key}: ${data2[key]}`; // !!
       }
-      return `${gap.repeat(repeat - 1)}- ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`;
+      return `${gap.repeat(repeat)}- ${key}: ${data1[key]}\n${gap.repeat(repeat)}+ ${key}: ${data2[key]}`;
     }
-    return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
+    return `${gap.repeat(repeat + 1)}${key}: ${data1[key]}`;
   });
-  return makeArrLookLikeObj(lines, repeat - 1).trim();
+  return makeArrLookLikeObj(lines, repeat).trim();
 }
 
 export default function gendiff(path1, path2) {
@@ -66,7 +68,7 @@ export default function gendiff(path1, path2) {
     }
   }
   */
-  return makeTree(data1, data2, 2);
+  return makeTree(data1, data2, 1);
 }
 
 console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));
