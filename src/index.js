@@ -18,7 +18,7 @@ function makeTree(data1, data2, repeat = 2) {
         if (_.isEqual(data1[key], data2[key])) {
           return `${gap.repeat(repeat)}${key}: ${data1[key]}`;
         }
-        return `${gap.repeat(repeat - 1)}+ ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}- ${key}: ${data2[key]}`;
+        return `${gap.repeat(repeat - 1)}- ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}+ ${key}: ${data2[key]}`; // !!
       }
       return `${gap.repeat(repeat - 1)}+ ${key}: ${data1[key]}\n${gap.repeat(repeat - 1)}- ${key}: ${data2[key]}`;
     }
