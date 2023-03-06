@@ -24,10 +24,11 @@ export function fullKeyListCostructor(obj1, obj2) {
 
 export function makeArrLookLikeObj(arrOfArrs) {
   let copy = _.cloneDeep(arrOfArrs);
-  copy = copy.map((entrie) => entrie.join(': '));
-  copy = copy.join('\n');
-  const result = `{\n${copy}\n}`;
+  copy = copy.map((line) => {
+    if (_.isArray(line)) {
+      return makeArrLookLikeObj(line);
+    }
+  });
+  const result = `{\n${copy.join('\n')}}`;
   return result;
 }
-
-console.log(cwd());

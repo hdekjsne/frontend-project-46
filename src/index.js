@@ -3,10 +3,33 @@ import _ from 'lodash';
 import { fullKeyListCostructor, makeArrLookLikeObj } from './utils.js';
 import { parse } from './parsers.js';
 
+function makeTree(data1, data2, repeat = 1) {
+  const keys = fullKeyListConstructor(data1, data2);
+  const lines = keys.map((key) => {
+    const gap = '  ';
+    if (Object.hasOwn(data1, key) && !Object.hasOwn(data2, key)) { // deleted
+      return `${gap.repeat(repeat - 1)}- ${key}: ${value}`;
+    } else if (!Object.hasOwn(data1, key) && Object.hasOwn(data2, key)) { // added
+      return `${gap.repeat(repeat - 1)}+ ${key}: ${value}`;
+    } else if (data1.key !== data2.key) { // changed
+      if ((_.isObject(data1.key) && !_.isArray(data1.key)) && (_.isObject(data2.key) && !_.isArray(data2.key))) { // both are objects
+        return `${gap.repeat(repeat)}${makeTree(data1.key, data2.key, repeat + 1)}`;
+      } else if (_.isArray(data1.key) || _.isArray(data2.key)) { // there are arrays
+        if (_.isEqual(data1.key, data2.key)) {
+          return `${gap.repeat(repeat)}${key}: ${data1.key}`;
+        }
+        return `${gap.repeat(repeat - 1)}+ ${key}: ${data1.key}\n${gap.repeat(repeat - 1)}- ${key}: ${data2.key}`;
+      }
+      return `${gap.repeat(repeat - 1)}+ ${key}: ${data1.key}\n${gap.repeat(repeat - 1)}- ${key}: ${data2.key}`;
+    }
+    return `${gap.repeat(repeat)}${key}: ${data1.key}`;
+  });
+  return makeArrLookLikeObj(lines);
+}
+
 export default function gendiff(path1, path2) {
   const data1 = parse(path1);
   const data2 = parse(path2);
-  const keys = fullKeyListCostructor(data1, data2);
   /*
   const resultEntries = keys.map((key) => {
     if (!Object.hasOwn(parsedData1, key)) {
@@ -24,7 +47,6 @@ export default function gendiff(path1, path2) {
       return [strKey, parsedData1[key]];
     }
   });
-  */
   const resultEntries = [];
   for (const key of keys) {
     if (!Object.hasOwn(data1, key)) {
@@ -43,6 +65,6 @@ export default function gendiff(path1, path2) {
       resultEntries.push([strKey, data1[key]]);
     }
   }
-  const result = makeArrLookLikeObj(resultEntries);
-  return result;
+  */
+  return makeTree(data1, data2, 1);
 }
