@@ -66,5 +66,5 @@ export default function gendiff(path1, path2) {
     }
   }
   */
-  return makeTree(data1, data2, 1);
+  return makeTree(data1, data2, 2);
 }
