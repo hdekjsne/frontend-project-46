@@ -3,6 +3,31 @@ import _ from 'lodash';
 import { fullKeyListConstructor, makeArrLookLikeObj } from './utils.js';
 import { parse } from './parsers.js';
 
+function keysWithKeys(obj1, obj2) {
+  const keys = fullKeyListConstructor(obj1, obj2);
+  const markedKeys = keys.map((key) => {
+    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2.key)) {
+      return [key, 'deleted'];
+    } else if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
+      return [key, 'added'];
+    } else if (obj1[key] !== obj2[key]) {
+      if (_.isArray(obj1[key]) && _.isArray(obj2[key])) {
+        return [key, 'array'];
+      } else if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
+        return [key, 'object'];
+      }
+      return [key, 'changed'];
+    }
+  });
+  return markedKeys;
+}
+
+function mT(data1, data2) {
+  const keys = keysWithKeys(data1, data2);
+}
+
+// ^ experimenting
+
 function makeTree(data1, data2, repeat = 1) {
   const keys = fullKeyListConstructor(data1, data2);
   const lines = keys.map((key) => {
