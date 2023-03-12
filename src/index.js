@@ -6,7 +6,7 @@ import { parse } from './parsers.js';
 function keysWithKeys(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
   const markedKeys = keys.map((key) => {
-    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2.key)) {
+    if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) {
       return [key, 'deleted'];
     } else if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
       return [key, 'added'];
@@ -18,16 +18,51 @@ function keysWithKeys(obj1, obj2) {
       }
       return [key, 'changed'];
     }
+    return [key, 'not changed'];
   });
   return markedKeys;
 }
 
-function mT(data1, data2) {
+/*
+- deleted
+- added
+- array / both
+- object / both
+- changed
+- not changed
+*/
+
+function mT(data1, data2, repeat) {
   const keys = keysWithKeys(data1, data2);
+  const lines = keys.map(([key, status]) => {
+    switch (status) {
+      case 'deleted':
+        return `- ${key}: ${data1[key]}`;
+        
+      case 'added':
+        return `+ ${key}: ${data2[key]}`;
+      
+      case 'array':
+        if (_.isEqual(data1[key], data2[key])) {
+          return `${key}: ${data1[key]}`;
+        }
+        return `- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`;
+        
+      case 'object':
+        return `${key}: ${mT(data1[key], data2[key])}`;
+        
+      case 'changed':
+        return `- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`;
+        
+      default:
+        return `${key}: ${data1[key]}`;
+    }
+  });
+  return lines;
 }
 
 // ^ experimenting
-
+/*
 function makeTree(data1, data2, repeat = 1) {
   const keys = fullKeyListConstructor(data1, data2);
   const lines = keys.map((key) => {
@@ -53,6 +88,7 @@ function makeTree(data1, data2, repeat = 1) {
   });
   return makeArrLookLikeObj(lines, repeat).trim();
 }
+*/
 
 export default function gendiff(path1, path2) {
   const data1 = parse(path1);
@@ -93,7 +129,7 @@ export default function gendiff(path1, path2) {
     }
   }
   */
-  return makeTree(data1, data2, 1);
+  return mT(data1, data2, 1);
 }
 
 console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));
