@@ -41,17 +41,20 @@ export function makeTreeFromArr(arrOfLines, repeat = 1) {
   const gap = '  ';
   let tree = arrOfLines.map(([line, status]) => {
     if (status === 'object') {
+      /*
       const linesOfObj = line.split('\n');
       return `${gap.repeat(repeat)}${linesOfObj[0]}: ${makeTreeFromArr(linesOfObj[1])}`;
+      */
+      return `${gap.repeat(repeat)}${line[0]}: ${makeTreeFromArr(line[1], repeat + 1)}`;
     }
     if (status === 'changed') {
       const linesOfChanged = line.split('\n');
-      return `${gap.repeat(repeat)}${linesOfChanged[0]}\n${gap.repeat(repeat)}${linesOfChanged[1]}`;
+      return `${gap.repeat(repeat - 1)}${linesOfChanged[0]}\n${gap.repeat(repeat - 1)}${linesOfChanged[1]}`;
     }
     if (status === 'deleted' || status === 'added') {
-      return `${gap.repeat(repeat)}${line}`;
+      return `${gap.repeat(repeat - 1)}${line}`;
     }
-    return `${gap.repeat(repeat + 1)}${line}`;
+    return `${gap.repeat(repeat)}${line}`;
   });
-  return `{\n${tree.join('\n')}\n}\n`.trim();
+  return `{\n${tree.join('\n')}\n${gap.repeat(repeat - 1)}}\n`.trim();
 }

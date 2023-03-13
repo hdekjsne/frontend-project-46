@@ -49,7 +49,7 @@ function makeTree(data1, data2, repeat) {
         return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, 'changed'];
         
       case 'object':
-        return [`${key}:\n${makeTree(data1[key], data2[key])}`, status];
+        return [[`${key}`, [makeTree(data1[key], data2[key])]], status];
         
       case 'changed':
         return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, status];
