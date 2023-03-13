@@ -1,6 +1,6 @@
 // import * as fs from 'node:fs';
 import _ from 'lodash';
-import { fullKeyListConstructor, makeArrLookLikeObj } from './utils.js';
+import { fullKeyListConstructor, makeTreeFromArr } from './utils.js';
 import { parse } from './parsers.js';
 
 function keysWithKeys(obj1, obj2) {
@@ -32,33 +32,34 @@ function keysWithKeys(obj1, obj2) {
 - not changed
 */
 
-function mT(data1, data2, repeat) {
+function makeTree(data1, data2, repeat) {
   const keys = keysWithKeys(data1, data2);
   const lines = keys.map(([key, status]) => {
     switch (status) {
       case 'deleted':
-        return `- ${key}: ${data1[key]}`;
+        return [`- ${key}: ${data1[key]}`, status];
         
       case 'added':
-        return `+ ${key}: ${data2[key]}`;
+        return [`+ ${key}: ${data2[key]}\n`, status];
       
       case 'array':
         if (_.isEqual(data1[key], data2[key])) {
-          return `${key}: ${data1[key]}`;
+          return [`${key}: ${data1[key]}\n`, 'not changed'];
         }
-        return `- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`;
+        return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, 'changed'];
         
       case 'object':
-        return `${key}: ${mT(data1[key], data2[key])}`;
+        return [`${key}:\n${makeTree(data1[key], data2[key])}`, status];
         
       case 'changed':
-        return `- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`;
+        return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, status];
         
       default:
-        return `${key}: ${data1[key]}`;
+        return [`${key}: ${data1[key]}\n`, status];
     }
   });
-  return lines;
+  console.log(lines);
+  return makeTreeFromArr(lines, repeat);
 }
 
 // ^ experimenting
@@ -129,7 +130,7 @@ export default function gendiff(path1, path2) {
     }
   }
   */
-  return mT(data1, data2, 1);
+  return makeTree(data1, data2, 1);
 }
 
 console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));

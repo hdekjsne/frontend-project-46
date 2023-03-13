@@ -22,6 +22,7 @@ export function fullKeyListConstructor(obj1, obj2) {
   return commonKeysList.flat().sort();
 }
 
+/*
 export function makeArrLookLikeObj(arrOfArrs, repeat) {
   let copy = _.cloneDeep(arrOfArrs);
   copy = copy.map((line) => {
@@ -33,4 +34,24 @@ export function makeArrLookLikeObj(arrOfArrs, repeat) {
   const gap = '  ';
   const result = `{\n${copy.join('\n')}\n${gap.repeat(repeat)}}\n`;
   return result;
+}
+*/
+
+export function makeTreeFromArr(arrOfLines, repeat = 1) {
+  const gap = '  ';
+  let tree = arrOfLines.map(([line, status]) => {
+    if (status === 'object') {
+      const linesOfObj = line.split('\n');
+      return `${gap.repeat(repeat)}${linesOfObj[0]}: ${makeTreeFromArr(linesOfObj[1])}`;
+    }
+    if (status === 'changed') {
+      const linesOfChanged = line.split('\n');
+      return `${gap.repeat(repeat)}${linesOfChanged[0]}\n${gap.repeat(repeat)}${linesOfChanged[1]}`;
+    }
+    if (status === 'deleted' || status === 'added') {
+      return `${gap.repeat(repeat)}${line}`;
+    }
+    return `${gap.repeat(repeat + 1)}${line}`;
+  });
+  return `{\n${tree.join('\n')}\n}\n`.trim();
 }
