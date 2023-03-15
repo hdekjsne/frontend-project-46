@@ -32,15 +32,21 @@ function keysWithKeys(obj1, obj2) {
 - not changed
 */
 
-function makeTree(data1, data2, repeat) {
+function makeTree(data1, data2 = data1, repeat) {
   const keys = keysWithKeys(data1, data2);
   const lines = keys.map(([key, status]) => {
     switch (status) {
       case 'deleted':
+        if (_.isObject(data1[key]) && !_.isArray(data1[key])) {
+          return [[key, makeTree(data1[key])], 'deleted object'];
+        }
         return [`- ${key}: ${data1[key]}`, status];
         
       case 'added':
-        return [`+ ${key}: ${data2[key]}\n`, status];
+        if (_.isObject(data2[key]) && !_.isArray(data2[key])) {
+          return [[key, makeTree(data2[key])], 'added object']
+        }
+        return [`+ ${key}: ${data2[key]}`, status];
       
       case 'array':
         if (_.isEqual(data1[key], data2[key])) {
@@ -49,17 +55,23 @@ function makeTree(data1, data2, repeat) {
         return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, 'changed'];
         
       case 'object':
-        return [[`${key}`, [makeTree(data1[key], data2[key])]], status];
+        return [[key, [makeTree(data1[key], data2[key])]], status];
         
       case 'changed':
+        if (_.isObject(data1[key]) && !_.isArray(data1[key])) {
+          return [[[key, makeTree(data1[key])], `+ ${key}: ${data2[key]}`], 'changed first object'];
+        } else if (_.isObject(data2[key]) && !_.isArray(data2[key])) {
+          return [[[key, makeTree(data2[key])], `- ${key}: ${data1[key]}`], 'changed second object'];
+        }
         return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}\n`, status];
         
       default:
-        return [`${key}: ${data1[key]}\n`, status];
+        return [`${key}: ${data1[key]}`, status];
     }
   });
   console.log(lines);
-  return makeTreeFromArr(lines, repeat);
+//  return makeTreeFromArr(lines, repeat);
+  return lines;
 }
 
 // ^ experimenting
@@ -130,7 +142,8 @@ export default function gendiff(path1, path2) {
     }
   }
   */
-  return makeTree(data1, data2, 1);
+  const preResult = makeTree(data1, data2, 1);
+  return makeTreeFromArr(preResult);
 }
 
 console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));

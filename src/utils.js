@@ -45,16 +45,34 @@ export function makeTreeFromArr(arrOfLines, repeat = 1) {
       const linesOfObj = line.split('\n');
       return `${gap.repeat(repeat)}${linesOfObj[0]}: ${makeTreeFromArr(linesOfObj[1])}`;
       */
-      return `${gap.repeat(repeat)}${line[0]}: ${makeTreeFromArr(line[1], repeat + 1)}`;
+      return `${gap.repeat(repeat)}${line[0]}: ${makeTreeFromArr(line[1], repeat + 2)}`;
     }
     if (status === 'changed') {
       const linesOfChanged = line.split('\n');
-      return `${gap.repeat(repeat - 1)}${linesOfChanged[0]}\n${gap.repeat(repeat - 1)}${linesOfChanged[1]}`;
+      return `${gap.repeat(repeat)}${linesOfChanged[0]}\n${gap.repeat(repeat)}${linesOfChanged[1]}`; // !!
     }
     if (status === 'deleted' || status === 'added') {
-      return `${gap.repeat(repeat - 1)}${line}`;
+      return `${gap.repeat(repeat)}${line}`; // !!
+    }
+    if (status === 'deleted object') {
+      const [key, values] = line;
+      return `- ${key}: ${makeTreeFromArr(values)}`;
+    }
+    if (status === 'added object') {
+      const [key, values] = line;
+      return `+ ${key}: ${makeTreeFromArr(values)}`;
+    }
+    if (status === 'changed first object') {
+      const [oldObj, newPrimitive] = line;
+      const [key, values] = oldObj;
+      return `${gap.repeat(repeat)}- ${key}: ${makeTreeFromArr(values)}\n${gap.repeat(repeat)}+ ${newPrimitive}`
+    }
+    if (status === 'changed second object') {
+      const [newObj, oldPrimitive] = line;
+      const [key, values] = newObj;
+      return `${gap.repeat(repeat)}- ${oldPrimitive}\n${gap.repeat(repeat)}+ ${key}: ${makeTreeFromArr(values)}`;
     }
     return `${gap.repeat(repeat)}${line}`;
   });
-  return `{\n${tree.join('\n')}\n${gap.repeat(repeat - 1)}}\n`.trim();
+  return `{\n${tree.join('\n')}\n${gap}.repeat(repeat - 1)}}\n`.trim();
 }
