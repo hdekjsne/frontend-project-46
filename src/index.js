@@ -129,7 +129,7 @@ export default function gendiff(path1, path2) {
   const preResult = makeLines(data1, data2);
   // следующая строчка собирает строки из предыдущей в одну большую древовидную строку
   // функция: src/utils.js
-  return makeTreeFromArr(preResult);
+  return makeTreeFromArr(preResult, 1);
   // самопроверка
   // return JSON.stringify(preResult);
 }

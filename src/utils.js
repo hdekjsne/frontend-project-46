@@ -40,46 +40,48 @@ export function fullKeyListConstructor(obj1, obj2) {
 - not changed or default
 */
 
-export function makeTreeFromArr(arrOfLines, repeat = 1) {
+export function makeTreeFromArr(arrOfLines, repeatCount) {
   // сразу определяем стандартный отступ
   const gap = '  ';
+  const gap1 = gap.repeat(repeatCount - 1);
+  const gap2 = gap.repeat(repeatCount);
   // дальше для каждого случая определяется свой способ формирования итоговой строки
   const tree = arrOfLines.map((arr) => {
     const [line, status, key, obj] = arr;
     switch(status) {
       case 'deleted':
-        return `${gap.repeat(repeat)}${line}`;
+        return `${gap1}${line}`;
         
       case 'deleted object':
-        return `${gap.repeat(repeat - 1)}- ${key}: ${makeTreeFromArr(obj)}`;
+        return `${gap1}- ${key}: ${makeTreeFromArr(obj)}`;
       
       case 'added':
-        return `${gap.repeat(repeat)}${line}`;
+        return `${gap1}${line}`;
         
       case 'added object':
-        return `${gap.repeat(repeat - 1)}+ ${key}: ${makeTreeFromArr(obj)}`;
+        return `${gap1}+ ${key}: ${makeTreeFromArr(obj)}`;
         
       case 'array':
-        return `${gap.repeat(repeat - 1)}${line[0]}\n${gap.repeat(repeat - 1)}${line[1]}`;
+        return `${gap1}${line[0]}\n${gap1}${line[1]}`;
         
       case 'object':
-        return `${gap.repeat(repeat)}${key}: ${makeTreeFromArr(obj, repeat + 2)}`;
+        return `${gap2}${key}: ${makeTreeFromArr(obj, repeatCount + 2)}`;
         
       case 'object first':
-        return `${gap.repeat(repeat - 1)}- ${key}: ${makeTreeFromArr(obj, repeat + 2)}\n${gap.repeat(repeat - 1)}${line}`;
+        return `${gap1}- ${key}: ${makeTreeFromArr(obj, repeatCount + 2)}\n${gap1}${line}`;
         
       case 'object second':
-        return `${gap.repeat(repeat - 1)}${line}\n${gap.repeat(repeat - 1)}+ ${key}: ${makeTreeFromArr(obj, repeat + 2)}`;
+        return `${gap1}${line}\n${gap1}+ ${key}: ${makeTreeFromArr(obj, repeatCount + 2)}`;
         
       case 'changed':
-        return `${gap.repeat(repeat - 1)}${line[0]}\n${gap.repeat(repeat - 1)}${line[1]}`;
+        return `${gap1}${line[0]}\n${gap1}${line[1]}`;
         
       default:
         // status === 'not changed'
-        return `${gap.repeat(repeat)}${line}`;
+        return `${gap2}${line}`;
     }
   });
   // строки объединяются спомощью \n и заключаются в {}
   // должно плучиться готовое дерево
-  return `{\n${tree.join('\n')}\n${gap}.repeat(repeat - 1)}}\n`.trim();
+  return `{\n${tree.join('\n')}\n${gap1}}\n`.trim();
 }
