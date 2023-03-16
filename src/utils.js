@@ -37,14 +37,26 @@ export function makeArrLookLikeObj(arrOfArrs, repeat) {
 }
 */
 
+/*
+- deleted
+- deleted object *
+- added
+- added object *
+- array / both
+- object / both
+- object first
+- object second
+- changed
+- not changed or default
+*/
+
 export function makeTreeFromArr(arrOfLines, repeat = 1) {
   const gap = '  ';
+  /*
   let tree = arrOfLines.map(([line, status]) => {
     if (status === 'object') {
-      /*
-      const linesOfObj = line.split('\n');
-      return `${gap.repeat(repeat)}${linesOfObj[0]}: ${makeTreeFromArr(linesOfObj[1])}`;
-      */
+      // const linesOfObj = line.split('\n');
+      // return `${gap.repeat(repeat)}${linesOfObj[0]}: ${makeTreeFromArr(linesOfObj[1])}`;
       return `${gap.repeat(repeat)}${line[0]}: ${makeTreeFromArr(line[1], repeat + 2)}`;
     }
     if (status === 'changed') {
@@ -73,6 +85,14 @@ export function makeTreeFromArr(arrOfLines, repeat = 1) {
       return `${gap.repeat(repeat)}- ${oldPrimitive}\n${gap.repeat(repeat)}+ ${key}: ${makeTreeFromArr(values)}`;
     }
     return `${gap.repeat(repeat)}${line}`;
+  });
+  */
+  const tree = arrOfLines.map(([line, status, obj1, obj2]), () => {
+    // [str, status, key, obj]
+    switch (status) {
+      case 'deleted':
+      return `${gap.repeat(repeat - 1)}${line}`;
+    }
   });
   return `{\n${tree.join('\n')}\n${gap}.repeat(repeat - 1)}}\n`.trim();
 }
