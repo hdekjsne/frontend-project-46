@@ -132,4 +132,5 @@ export default function gendiff(path1, path2) {
   // return JSON.stringify(preResult);
 }
 
+// внизу тоже для проверки
 console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));
