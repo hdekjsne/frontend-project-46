@@ -24,10 +24,10 @@ function keysWithTags(obj1, obj2) {
         return [key, 'object'];
       } else if (_.isObject(obj1[key]) && !_.isArray(obj1[key])) {
         // ключ был изменён с объекта на примитив или массив
-        return [key, 'object first', keysWithTags(obj1[key])];
-      } else if (!_.isArray(obj2[key]) && _.isObject(obj2[key])) {
+        return [key, 'object first'];
+      } else if (_.isObject(obj2[key]) && !_.isArray(obj2[key])) {
         // ключ был изменён с примитива или массива на объект
-        return [key, 'object second', keysWithTags(obj2[key])];
+        return [key, 'object second'];
       }
       // примитив, который просто изменили
       return [key, 'changed'];
@@ -41,9 +41,9 @@ function keysWithTags(obj1, obj2) {
 /*
 Список всех тэгов отдельно:
 - deleted
-- deleted object *
+- deleted object
 - added
-- added object *
+- added object
 - array / both
 - object / both
 - object first
@@ -57,7 +57,7 @@ function makeLines(data1, data2 = data1) {
   // на этом шаге сравниваются ключи двух объектов и каждому присваивается тег состояния (изменён или нет и пр.)
   // функция находится выше
   const keys = keysWithTags(data1, data2); 
-  // result строится по шаблону: str, status, key (опционально), object (опционально). 
+  // result строится по шаблону: [str, status, key (опционально), object (опционально)].
   // насколько я помню (и мне недавно так сказал товарищ из другой группы),
   // классы в этом проекте не используются
   const lines = keys.map(([key, status]) => {
@@ -89,7 +89,7 @@ function makeLines(data1, data2 = data1) {
         
       case 'object':
         // вот здесь возникла большая проблема
-        // это случай, когда оба значения - объекты
+        // это случай, когда оба значения - объекты, внутри которых тоже нужно всё сравнить
         return ['', status, key, makeLines(data1[key], data2[key])];
         
       case 'object first':
@@ -110,7 +110,7 @@ function makeLines(data1, data2 = data1) {
     }
   });
 // это просто для самопроверки
-//  console.log(lines);
+  console.log(lines);
 //  return makeTreeFromArr(lines, repeat);
   return lines;
 // тоже для самопроверки
@@ -123,6 +123,8 @@ export default function gendiff(path1, path2) {
   // здесь пока всё работает
   const data1 = parse(path1);
   const data2 = parse(path2);
+  console.log(data1);
+  console.log(data2);
   // внизу получаем из данных готовые строки для объединения, функция выше
   const preResult = makeLines(data1, data2);
   // следующая строчка собирает строки из предыдущей в одну большую древовидную строку

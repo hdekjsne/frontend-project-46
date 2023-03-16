@@ -63,13 +63,13 @@ export function makeTreeFromArr(arrOfLines, repeat = 1) {
         return `${gap.repeat(repeat - 1)}${line[0]}\n${gap.repeat(repeat - 1)}${line[1]}`;
         
       case 'object':
-        return `${gap.repeat(repeat)}${key}: ${makeTreeFromArr(obj, repeat + 1)}`;
+        return `${gap.repeat(repeat)}${key}: ${makeTreeFromArr(obj, repeat + 2)}`;
         
       case 'object first':
-        return `${gap.repeat(repeat - 1)}- ${key}: ${makeTreeFromArr(obj, repeat + 1)}\n${gap.repeat(repeat - 1)}${line}`;
+        return `${gap.repeat(repeat - 1)}- ${key}: ${makeTreeFromArr(obj, repeat + 2)}\n${gap.repeat(repeat - 1)}${line}`;
         
       case 'object second':
-        return `${gap.repeat(repeat - 1)}${line}\n${gap.repeat(repeat - 1)}+ ${key}: ${makeTreeFromArr(obj, repeat + 1)}`;
+        return `${gap.repeat(repeat - 1)}${line}\n${gap.repeat(repeat - 1)}+ ${key}: ${makeTreeFromArr(obj, repeat + 2)}`;
         
       case 'changed':
         return `${gap.repeat(repeat - 1)}${line[0]}\n${gap.repeat(repeat - 1)}${line[1]}`;
@@ -80,6 +80,6 @@ export function makeTreeFromArr(arrOfLines, repeat = 1) {
     }
   });
   // строки объединяются спомощью \n и заключаются в {}
-  // должн плучиться готовое дерево
+  // должно плучиться готовое дерево
   return `{\n${tree.join('\n')}\n${gap}.repeat(repeat - 1)}}\n`.trim();
 }
