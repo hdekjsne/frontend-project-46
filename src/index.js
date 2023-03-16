@@ -61,7 +61,7 @@ function makeLines(data1, data2 = data1) {
         if (_.isEqual(data1[key], data2[key])) {
           return [`${key}: ${data1[key]}`, 'not changed'];
         }
-        return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`, 'changed'];
+        return [[`- ${key}: ${data1[key]}`, `+ ${key}: ${data2[key]}`], 'changed'];
         // [str, status, key, object]
       case 'object':
         return ['', status, key, [makeLines(data1[key]), makeLines(data2[key])]];
@@ -73,7 +73,7 @@ function makeLines(data1, data2 = data1) {
         return [`- ${key}: ${data1[key]}`, status, key, makeLines(data2[key])];
         
       case 'changed':
-        return [`- ${key}: ${data1[key]}\n+ ${key}: ${data2[key]}`, status];
+        return [[`- ${key}: ${data1[key]}`, `+ ${key}: ${data2[key]}`], 'changed'];
         
       default:
         return [`${key}: ${data1[key]}`, status]; // status === 'not changed'
