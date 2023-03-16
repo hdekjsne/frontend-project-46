@@ -23,21 +23,6 @@ export function fullKeyListConstructor(obj1, obj2) {
 }
 
 /*
-export function makeArrLookLikeObj(arrOfArrs, repeat) {
-  let copy = _.cloneDeep(arrOfArrs);
-  copy = copy.map((line) => {
-    if (_.isArray(line)) {
-      return makeArrLookLikeObj(line);
-    }
-    return line;
-  });
-  const gap = '  ';
-  const result = `{\n${copy.join('\n')}\n${gap.repeat(repeat)}}\n`;
-  return result;
-}
-*/
-
-/*
 - deleted
 - deleted object *
 - added
