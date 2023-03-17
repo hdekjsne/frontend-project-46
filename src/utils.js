@@ -1,6 +1,5 @@
 import { cwd } from 'node:process';
 import path from 'node:path';
-import _ from 'lodash';
 
 // функция ниже используется в src/parsers.js
 export function makeAbsolutePath(route) {
