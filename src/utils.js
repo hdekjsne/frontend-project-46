@@ -13,7 +13,6 @@ export function makeAbsolutePath(route) {
 
 export function fullKeyListConstructor(obj1, obj2) {
   const keys1 = Object.keys(obj1);
-  // строчка ниже выдаёт ошибку из скрина
   const keys2 = Object.keys(obj2);
   // мап вытаскивает все оригинальные ключи из обоих объектов
   const commonKeysList = keys1.map((key) => key);
@@ -37,6 +36,7 @@ export function fullKeyListConstructor(obj1, obj2) {
 - object first
 - object second
 - changed
+- not changed object
 - not changed or default
 */
 
@@ -45,6 +45,8 @@ export function makeTreeFromArr(arrOfLines, repeatCount) {
   const gap = '  ';
   const gap1 = gap.repeat(repeatCount - 1);
   const gap2 = gap.repeat(repeatCount);
+  const gap3 = gap.repeat(repeatCount - 2);
+  const transGap = repeatCount + 2;
   // дальше для каждого случая определяется свой способ формирования итоговой строки
   const tree = arrOfLines.map((arr) => {
     const [line, status, key, obj] = arr;
@@ -53,28 +55,31 @@ export function makeTreeFromArr(arrOfLines, repeatCount) {
         return `${gap1}${line}`;
         
       case 'deleted object':
-        return `${gap1}- ${key}: ${makeTreeFromArr(obj)}`;
+        return `${gap1}- ${key}: ${makeTreeFromArr(obj, transGap)}`;
       
       case 'added':
         return `${gap1}${line}`;
         
       case 'added object':
-        return `${gap1}+ ${key}: ${makeTreeFromArr(obj)}`;
+        return `${gap1}+ ${key}: ${makeTreeFromArr(obj, transGap)}`;
         
       case 'array':
         return `${gap1}${line[0]}\n${gap1}${line[1]}`;
         
       case 'object':
-        return `${gap2}${key}: ${makeTreeFromArr(obj, repeatCount + 2)}`;
+        return `${gap2}${key}: ${makeTreeFromArr(obj, transGap)}`;
         
       case 'object first':
-        return `${gap1}- ${key}: ${makeTreeFromArr(obj, repeatCount + 2)}\n${gap1}${line}`;
+        return `${gap1}- ${key}: ${makeTreeFromArr(obj, transGap)}\n${gap1}${line}`;
         
       case 'object second':
-        return `${gap1}${line}\n${gap1}+ ${key}: ${makeTreeFromArr(obj, repeatCount + 2)}`;
+        return `${gap1}${line}\n${gap1}+ ${key}: ${makeTreeFromArr(obj, transGap)}`;
         
       case 'changed':
         return `${gap1}${line[0]}\n${gap1}${line[1]}`;
+        
+      case 'not changed object':
+        return `${gap2}${key}: ${makeTreeFromArr(obj, transGap)}`;
         
       default:
         // status === 'not changed'
@@ -83,5 +88,5 @@ export function makeTreeFromArr(arrOfLines, repeatCount) {
   });
   // строки объединяются спомощью \n и заключаются в {}
   // должно плучиться готовое дерево
-  return `{\n${tree.join('\n')}\n${gap1}}\n`.trim();
+  return `{\n${tree.join('\n')}\n${gap3}}\n`.trim();
 }

@@ -49,10 +49,11 @@ function keysWithTags(obj1, obj2) {
 - object first
 - object second
 - changed
+- not changed object
 - not changed
 */
 
-// внизу я сделало это с параметрами, потому что функция часто вызывается только на один объект
+// внизу я сделалa это с параметрами, потому что функция часто вызывается только на один объект
 function makeLines(data1, data2 = data1) {
   // на этом шаге сравниваются ключи двух объектов и каждому присваивается тег состояния (изменён или нет и пр.)
   // функция находится выше
@@ -68,7 +69,7 @@ function makeLines(data1, data2 = data1) {
           return ['', 'deleted object', key, makeLines(data1[key])];
         }
         // значение было примитивом
-        return [`- ${key}: ${data1[key]}`, status];
+        return [`- ${key}: ${data1[key]}`.trim(), status];
         
       case 'added':
         // значение стало объектом
@@ -76,63 +77,52 @@ function makeLines(data1, data2 = data1) {
         return ['', 'added object', key, makeLines(data2[key])];
         }
         // значение стало примитивом
-        return [`+ ${key}: ${data2[key]}`, status];
+        return [`+ ${key}: ${data2[key]}`.trim(), status];
       
       case 'array':
         // сравнение двух массивов
         // ничего не изменилось
         if (_.isEqual(data1[key], data2[key])) {
-          return [`${key}: ${data1[key]}`, 'not changed'];
+          return [`${key}: ${data1[key]}`.trim(), 'not changed'];
         }
         // изменилось
-        return [[`- ${key}: ${data1[key]}`, `+ ${key}: ${data2[key]}`], 'changed'];
+        return [[`- ${key}: ${data1[key]}`.trim(), `+ ${key}: ${data2[key]}`.trim()], 'changed'];
         
       case 'object':
-        // вот здесь возникла большая проблема
         // это случай, когда оба значения - объекты, внутри которых тоже нужно всё сравнить
         return ['', status, key, makeLines(data1[key], data2[key])];
         
       case 'object first':
         // изменился с объекта на примитив или массив
-        return [`+ ${key}: ${data2[key]}`, status, key, makeLines(data1[key])];
+        return [`+ ${key}: ${data2[key]}`.trim(), status, key, makeLines(data1[key])];
         
       case 'object second':
         // изменился на объект
-        return [`- ${key}: ${data1[key]}`, status, key, makeLines(data2[key])];
+        return [`- ${key}: ${data1[key]}`.trim(), status, key, makeLines(data2[key])];
         
       case 'changed':
         // просто изменился без лишних заморочек
-        return [[`- ${key}: ${data1[key]}`, `+ ${key}: ${data2[key]}`], 'changed'];
+        return [[`- ${key}: ${data1[key]}`.trim(), `+ ${key}: ${data2[key]}`.trim()], 'changed'];
         
       default:
         // status === 'not changed'
-        return [`${key}: ${data1[key]}`, status];
+        if (_.isObject(data1[key]) && !_.isArray(data1[key])) {
+          return ['', 'not changed object', key, makeLines(data1[key])];
+        }
+        return [`${key}: ${data1[key]}`.trim(), status];
     }
   });
-// это просто для самопроверки
-  console.log(lines);
-//  return makeTreeFromArr(lines, repeat);
   return lines;
-// тоже для самопроверки
-//  return {values: lines};
 }
 
 export default function gendiff(path1, path2) {
   // парсим файлы
   // функция: src/parsers.js
-  // здесь пока всё работает
   const data1 = parse(path1);
   const data2 = parse(path2);
-  console.log(data1);
-  console.log(data2);
   // внизу получаем из данных готовые строки для объединения, функция выше
   const preResult = makeLines(data1, data2);
   // следующая строчка собирает строки из предыдущей в одну большую древовидную строку
   // функция: src/utils.js
-  return makeTreeFromArr(preResult, 1);
-  // самопроверка
-  // return JSON.stringify(preResult);
+  return makeTreeFromArr(preResult, 2);
 }
-
-// внизу тоже для проверки
-console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json'));
