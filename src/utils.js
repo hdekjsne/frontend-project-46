@@ -25,8 +25,16 @@ export function fullKeyListConstructor(obj1, obj2) {
   return commonKeysList.flat().sort();
 }
 
-export function isObjForSure(value) {
-  (_.isObject(value) && !_.isArray(value)) ? true : false;
+export function checkType(value, type) {
+  const others = ['undefined', 'boolean', 'string', 'number', 'bigint', 'symbol'];
+  if (_.isArray(value) && type === 'array') {
+    return true
+  } else if (type === 'object' && (_.isObject(value) && !_.isArray(value))) {
+    return true;
+  } else if (type === 'other' && others.includes(typeof value)) {
+    return true;
+  }
+  return false;
 }
 
 /*
