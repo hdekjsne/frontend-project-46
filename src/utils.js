@@ -59,29 +59,33 @@ export function keysWithTags(obj1, obj2) {
   // структура: [ключ, тег]
   const markedKeys = keys.map((key) => {
     if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) {
-      // ключ удалён
+      if (checkType(obj1[key], 'object')) {
+        return [key, 'deleted object'];
+      }
       return [key, 'deleted'];
     } else if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
+      if (checkType(obj2, 'object')) {
+        return [key, 'added object'];
+      }
       // ключ добавлен
       return [key, 'added'];
-    } else if (obj1[key] !== obj2[key]) {
-      if (_.isArray(obj1[key]) && _.isArray(obj2[key])) {
-        // исключаем массивы, потому что _.isObject детектит массив как объект
-        return [key, 'array'];
-      } else if ((_.isObject(obj1[key]) && !_.isArray(obj1[key])) && (_.isObject(obj2[key]) && !_.isArray(obj2[key]))) {
-        // объекты в обоих случаях
-        return [key, 'object'];
-      } else if (_.isObject(obj1[key]) && !_.isArray(obj1[key])) {
-        // ключ был изменён с объекта на примитив или массив
-        return [key, 'object first'];
-      } else if (_.isObject(obj2[key]) && !_.isArray(obj2[key])) {
-        // ключ был изменён с примитива или массива на объект
-        return [key, 'object second'];
+    } else if (checkType(obj1[key], 'array') && checkType(obj2[key], 'array')) {
+      if (_.isEqual(obj1[key], obj2[key])) {
+        return [key, 'not changed'];
       }
-      // примитив, который просто изменили
+      return [key, 'changed'];
+    } else if (checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) {
+      if (_.isEqual(obj1[key], obj2[key])) {
+        return [key, 'not changed object'];
+      }
+      return [key, 'object'];
+    } else if (checkType(obj1[key], 'object') && checkType(obj2[key], 'other')) {
+      return [key, 'object first'];
+    } else if (checkType(obj1[key], 'other') && checkType(obj2[key], 'object')) {
+      return [key, 'object second'];
+    } else if (obj1[key] !== obj2[key]) {
       return [key, 'changed'];
     }
-    // ничего не изменилось
     return [key, 'not changed'];
   });
   return markedKeys;
@@ -97,30 +101,17 @@ export function makeLines(data1, data2 = data1) {
   // классы в этом проекте не используются
   const lines = keys.map(([key, status]) => {
     switch (status) {
+      case 'deleted object':
+        return ['', status, key, makeLines(data1[key])];
+      
       case 'deleted':
-        // значение было объектом
-        if (_.isObject(data1[key]) && !_.isArray(data1[key])) {
-          return ['', 'deleted object', key, makeLines(data1[key])];
-        }
-        // значение было примитивом
         return [`- ${key}: ${data1[key]}`.trim(), status];
         
-      case 'added':
-        // значение стало объектом
-        if (_.isObject(data2[key]) && !_.isArray(data2[key])) {
+      case 'added object':
         return ['', 'added object', key, makeLines(data2[key])];
-        }
-        // значение стало примитивом
+        
+      case 'added':
         return [`+ ${key}: ${data2[key]}`.trim(), status];
-      
-      case 'array':
-        // сравнение двух массивов
-        // ничего не изменилось
-        if (_.isEqual(data1[key], data2[key])) {
-          return [`${key}: ${data1[key]}`.trim(), 'not changed'];
-        }
-        // изменилось
-        return [[`- ${key}: ${data1[key]}`.trim(), `+ ${key}: ${data2[key]}`.trim()], 'changed'];
         
       case 'object':
         // это случай, когда оба значения - объекты, внутри которых тоже нужно всё сравнить
@@ -138,11 +129,11 @@ export function makeLines(data1, data2 = data1) {
         // просто изменился без лишних заморочек
         return [[`- ${key}: ${data1[key]}`.trim(), `+ ${key}: ${data2[key]}`.trim()], 'changed'];
         
+      case 'not changed object':
+        return ['', status, key, makeLines(data1[key])];
+        
       default:
         // status === 'not changed'
-        if (_.isObject(data1[key]) && !_.isArray(data1[key])) {
-          return ['', 'not changed object', key, makeLines(data1[key])];
-        }
         return [`${key}: ${data1[key]}`.trim(), status];
     }
   });
