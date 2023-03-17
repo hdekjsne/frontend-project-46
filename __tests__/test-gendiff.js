@@ -1,4 +1,4 @@
-import { fullKeyListConstructor, makeArrLookLikeObj } from "../src/utils.js";
+import { fullKeyListConstructor, makeTreeFromArr } from "../src/utils.js";
 import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
 
@@ -34,48 +34,48 @@ const example = `{
 }`
 
 const example2 = `{
-  common: {
-    + follow: false
-      setting1: Value 1
-    - setting2: 200
-    - setting3: true
-    + setting3: null
-    + setting4: blah blah
-    + setting5: {
-          key5: value5
-      }
-      setting6: {
-          doge: {
-            - wow:
-            + wow: so much
-          }
-          key: value
-        + ops: vops
-      }
-  }
-  group1: {
-    - baz: bas
-    + baz: bars
-      foo: bar
-    - nest: {
-          key: value
-      }
-    + nest: str
-  }
-- group2: {
-      abc: 12345
-      deep: {
-          id: 45
-      }
-  }
-+ group3: {
-      deep: {
-          id: {
-              number: 45
-          }
-      }
-      fee: 100500
-  }
+    common: {
+      + follow: false
+        setting1: Value 1
+      - setting2: 200
+      - setting3: true
+      + setting3: null
+      + setting4: blah blah
+      + setting5: {
+            key5: value5
+        }
+        setting6: {
+            doge: {
+              - wow:
+              + wow: so much
+            }
+            key: value
+          + ops: vops
+        }
+    }
+    group1: {
+      - baz: bas
+      + baz: bars
+        foo: bar
+      - nest: {
+            key: value
+        }
+      + nest: str
+    }
+  - group2: {
+        abc: 12345
+        deep: {
+            id: 45
+        }
+    }
+  + group3: {
+        deep: {
+            id: {
+                number: 45
+            }
+        }
+        fee: 100500
+    }
 }`
 
 test('check parser', () => {
@@ -88,6 +88,7 @@ test('check fullKeyListConstructor', () => {
   expect(fullKeyListConstructor([], [])).toEqual([]);
 });
 
+/*
 test('check makeArrLookLikeObj', () => {
   const arr = [
     'aaaaaa: aaaaaaaaaaaa',
@@ -98,6 +99,41 @@ test('check makeArrLookLikeObj', () => {
   const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: \'eggs\', \'milk\', \'vinegar\'\n}\n`;
   expect(makeArrLookLikeObj(arr)).toEqual(str);
   expect(makeArrLookLikeObj([])).toEqual('{\n\n}\n');
+});
+*/
+
+test('check makeTreeFromArr', () => {
+  const arr = [
+    ['- a: aaa', 'deleted'],
+    ['+ aa: aa?', 'added'],
+    [['- b: :)', '+ b: :('], 'changed'],
+    [['- c: a, b, c', '+ c: d, e, f'], 'changed'],
+    ['d: 22', 'not changed'],
+    [
+      '',
+      'object',
+      'e',
+      [
+        ['aa: true', 'not changed'],
+        ['+ lol: lmao', 'added']
+      ]
+    ]
+  ];
+  const obj = `{
+  - a: aaa
+  + aa: aa?
+  - b: :)
+  + b: :(
+  - c: a, b, c
+  + c: d, e, f
+    d: 22
+    e: {
+        aa: true
+      + lol: lmao
+    }
+}`;
+
+  expect(makeTreeFromArr(arr, 2)).toEqual(obj);
 });
 
 test('check gendiff', () => {
