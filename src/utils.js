@@ -73,7 +73,6 @@ export function keysWithTags(obj1, obj2) {
       if (_.isEqual(obj1[key], obj2[key])) {
         return [key, 'not changed'];
       }
-      return [key, 'changed'];
     } else if (checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) {
       if (_.isEqual(obj1[key], obj2[key])) {
         return [key, 'not changed object'];
