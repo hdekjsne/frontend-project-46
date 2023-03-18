@@ -64,7 +64,7 @@ export function keysWithTags(obj1, obj2) {
       }
       return [key, 'deleted'];
     } else if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
-      if (checkType(obj2, 'object')) {
+      if (checkType(obj2[key], 'object')) {
         return [key, 'added object'];
       }
       // ключ добавлен
