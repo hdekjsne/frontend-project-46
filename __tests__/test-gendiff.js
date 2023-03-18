@@ -1,4 +1,4 @@
-import { fullKeyListConstructor, checkType, makeTreeFromArr } from "../src/utils.js";
+import { fullKeyListConstructor, checkType } from "../src/utils.js";
 import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
 
@@ -46,7 +46,7 @@ const example2 = `{
         }
         setting6: {
             doge: {
-              - wow:
+              - wow: 
               + wow: so much
             }
             key: value
@@ -100,40 +100,6 @@ test('check checkType', () => {
   expect(checkType(1, 'other')).toBe(true);
   expect(checkType([], 'other')).toBe(false);
   expect(checkType(Infinity, 'other')).toBe(true);
-});
-
-test('check makeTreeFromArr', () => {
-  const arr = [
-    ['- a: aaa', 'deleted'],
-    ['+ aa: aa?', 'added'],
-    [['- b: :)', '+ b: :('], 'changed'],
-    [['- c: a, b, c', '+ c: d, e, f'], 'changed'],
-    ['d: 22', 'not changed'],
-    [
-      '',
-      'object',
-      'e',
-      [
-        ['aa: true', 'not changed'],
-        ['+ lol: lmao', 'added']
-      ]
-    ]
-  ];
-  const obj = `{
-  - a: aaa
-  + aa: aa?
-  - b: :)
-  + b: :(
-  - c: a, b, c
-  + c: d, e, f
-    d: 22
-    e: {
-        aa: true
-      + lol: lmao
-    }
-}`;
-
-  expect(makeTreeFromArr(arr, 2)).toEqual(obj);
 });
 
 test('check gendiff', () => {
