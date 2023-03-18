@@ -140,13 +140,11 @@ export function makeLines(data1, data2 = data1) {
 }
 
 export function makeTreeFromArr(arrOfLines, repeatCount) {
-  // сразу определяем стандартный отступ
   const gap = '  ';
   const gap1 = gap.repeat(repeatCount - 1);
   const gap2 = gap.repeat(repeatCount);
   const gap3 = gap.repeat(repeatCount - 2);
   const transGap = repeatCount + 2;
-  // дальше для каждого случая определяется свой способ формирования итоговой строки
   const tree = arrOfLines.map((arr) => {
     const [line, status, key, obj] = arr;
     switch(status) {
@@ -185,7 +183,5 @@ export function makeTreeFromArr(arrOfLines, repeatCount) {
         return `${gap2}${line}`;
     }
   });
-  // строки объединяются спомощью \n и заключаются в {}
-  // должно плучиться готовое дерево
   return `{\n${tree.join('\n')}\n${gap3}}\n`.trim();
 }

@@ -102,20 +102,6 @@ test('check checkType', () => {
   expect(checkType(Infinity, 'other')).toBe(true);
 });
 
-/*
-test('check makeArrLookLikeObj', () => {
-  const arr = [
-    'aaaaaa: aaaaaaaaaaaa',
-    'question: a?',
-    `not a string: ${2}`,
-    'basket: \'eggs\', \'milk\', \'vinegar\''
-  ];
-  const str = `{\naaaaaa: aaaaaaaaaaaa\nquestion: a?\nnot a string: ${2}\nbasket: \'eggs\', \'milk\', \'vinegar\'\n}\n`;
-  expect(makeArrLookLikeObj(arr)).toEqual(str);
-  expect(makeArrLookLikeObj([])).toEqual('{\n\n}\n');
-});
-*/
-
 test('check makeTreeFromArr', () => {
   const arr = [
     ['- a: aaa', 'deleted'],
