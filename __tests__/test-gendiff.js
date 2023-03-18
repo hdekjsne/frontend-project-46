@@ -1,4 +1,4 @@
-import { fullKeyListConstructor, makeTreeFromArr } from "../src/utils.js";
+import { fullKeyListConstructor, checkType, makeTreeFromArr } from "../src/utils.js";
 import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
 
@@ -86,6 +86,20 @@ test('check fullKeyListConstructor', () => {
   expect(fullKeyListConstructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
   expect(fullKeyListConstructor(file2, file1)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
   expect(fullKeyListConstructor([], [])).toEqual([]);
+});
+
+test('check checkType', () => {
+  expect(checkType({}, 'object')).toBe(true);
+  expect(checkType([], 'object')).toBe(false);
+  expect(checkType('a', 'object')).toBe(false);
+  
+  expect(checkType([], 'array')).toBe(true);
+  expect(checkType({}, 'array')).toBe(false);
+  expect(checkType(1, 'array')).toBe(false);
+  
+  expect(checkType(1, 'other')).toBe(true);
+  expect(checkType([], 'other')).toBe(false);
+  expect(checkType(Infinity, 'other')).toBe(true);
 });
 
 /*
