@@ -1,9 +1,10 @@
 // import * as fs from 'node:fs';
 import { parse } from './parsers.js';
 import { fullKeyListConstructor, checkType, rg } from './utils.js';
+import { makePlain } from './formatter.js';
 import _ from 'lodash';
 
-function keysWithTags(obj1, obj2) {
+export function keysWithTags(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
   // структура: [ключ, тег]
   const markedKeys = keys.map((key) => {
@@ -24,7 +25,17 @@ function keysWithTags(obj1, obj2) {
   });
   return markedKeys;
 }
-
+/*
+- deleted object / removed
+- deleted / removed
+- added object / added
+- added / added
+- object / rec
+- object first / changed 
+- object second / changed
+- changed / changed
+- not changed / -
+*/
 function makeTree(gap, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
   const objectGuts = keys.map(([key, status]) => {
@@ -60,8 +71,8 @@ function makeTree(gap, data1, data2 = data1) {
   return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim(); 
 }
 
-export default function gendiff(path1, path2) {
+export default function gendiff(path1, path2, type) {
   const data1 = parse(path1);
   const data2 = parse(path2);
-  return makeTree(2, data1, data2);
+  return type === 'plain' ? makePlain(data1, data2) : makeTree(2, data1, data2);
 }
