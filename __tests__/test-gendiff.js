@@ -1,6 +1,7 @@
 import { fullKeyListConstructor, checkType } from "../src/utils.js";
 import { parse } from "../src/parsers.js";
 import gendiff from '../src/index.js';
+import * as fs from 'node:fs';
 
 const file1 = {
   "host": "hexlet.io",
@@ -105,4 +106,9 @@ test('check checkType', () => {
 test('check gendiff', () => {
   expect(gendiff('__fixtures__/file1.json', '__fixtures__/file2.json')).toEqual(example);
   expect(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json')).toEqual(example2);
+});
+
+test('check formatter', () => {
+  const result = fs.readFileSync('__fixtures__/file-plain.txt', 'utf-8');
+  expect(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json', 'plain')).toEqual(result);
 });

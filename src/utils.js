@@ -2,7 +2,6 @@ import { cwd } from 'node:process';
 import path from 'node:path';
 import _ from 'lodash';
 
-// функция ниже используется в src/parsers.js
 export function makeAbsolutePath(route) {
   const curDir = cwd().includes('\\') ? cwd().split('\\') : cwd().split('/'); // arr from path
   const splittedPath = route.includes('\\') ? route.split('\\') : route.split('/'); // arr from path
@@ -14,14 +13,12 @@ export function makeAbsolutePath(route) {
 export function fullKeyListConstructor(obj1, obj2) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  // мап вытаскивает все оригинальные ключи из обоих объектов
   const commonKeysList = keys1.map((key) => key);
   commonKeysList.push(keys2.map((key) => {
     if (!keys1.includes(key)) {
       return key;
     }
   }).filter((key) => key !== undefined ? true : false));
-  // сортирует в алфавитном порядке
   return commonKeysList.flat().sort();
 }
 
@@ -35,6 +32,12 @@ export function checkType(value, type) {
     return true;
   }
   return false;
+}
+
+export function checkValueType(value) {
+  if (typeof value === 'string') return `'${value}'`;
+  if (checkType(value, 'object')) return '[complex value]';
+  return value;
 }
 
 // like 'repeat gap'
