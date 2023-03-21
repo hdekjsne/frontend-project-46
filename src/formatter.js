@@ -1,5 +1,5 @@
 import { fullKeyListConstructor, rg, checkType, checkValueType } from './utils.js';
-import
+import _ from 'lodash';
 
 function keysWithTags(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
@@ -23,15 +23,15 @@ function keysWithTags(obj1, obj2) {
   return markedKeys;
 }
 /*
-- deleted object / removed -
-- deleted / removed - 
-- added object / added -
-- added / added -
-- object / rec
-- object first / changed  -
-- object second / changed -
-- changed / changed -
-- not changed / -
+- deleted object
+- deleted 
+- added object
+- added
+- object
+- object first
+- object second
+- changed
+- not changed
 */
 
 export function makeStylish(gap, data1, data2 = data1) {
@@ -85,4 +85,33 @@ export function makePlain(obj1, obj2, path = '') {
     }
   }).filter((line) => line !== undefined ? true : false);
   return lines.join('').trim();
+}
+
+export class Value {
+  constructor(key, type, value1, value2) {
+    this.key = key;
+    this.type = type;
+    this.value1 = value1;
+    this.value2 = value2;
+  }
+}
+
+export function makeJson(obj1, obj2) {
+  const keys = keysWithTags(obj1, obj2);
+  const result = keys.reduce((acc, [key, status]) => {
+    if (status.startsWith('deleted')) {
+      acc[key] = new Value(key, 'removed', _.cloneDeep(obj1[key]), undefined);
+    } else if (status.startsWith('added')) {
+      acc[key] = new Value(key, 'added', undefined, _.cloneDeep(obj2[key]));
+    } else if (status === 'object') {
+      acc[key] = new Value(key, 'nested', makeJson(obj1[key], obj2[key]));
+    } else if (status.startsWith('object') || status === 'changed') {
+      acc[key] = new Value(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
+    } else if (status === 'not changed') {
+      acc[key] = new Value(key, status, _.cloneDeep(obj1[key], _.cloneDeep(obj2[key])));
+    }
+    return acc;
+  }, {});
+  // return JSON.stringify(result, '', 2);
+  return result;
 }
