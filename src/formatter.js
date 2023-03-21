@@ -112,7 +112,7 @@ export function makeJson(obj1, obj2) {
     if (status.startsWith('deleted')) acc[key] = new Value(key, 'removed', _.cloneDeep(obj1[key]), undefined);
     if (status.startsWith('added')) acc[key] = new Value(key, 'added', undefined, _.cloneDeep(obj2[key]));
     if (status === 'object') acc[key] = new Value(key, 'nested', makeJson(obj1[key], obj2[key]));
-    if (status.startsWith('object') || status === 'changed') {
+    if (status === 'object first'|| status === 'object second' || status === 'changed') {
       acc[key] = new Value(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     } 
     if (status === 'not changed') acc[key] = new Value(key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
