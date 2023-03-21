@@ -37,6 +37,7 @@ function keysWithTags(obj1, obj2) {
 export function makeStylish(gap, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
   const objectGuts = keys.map(([key, status]) => {
+    let line;
     switch (status) {
       case 'deleted object':
         return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
@@ -74,15 +75,15 @@ export function makePlain(obj1, obj2, path = '') {
   const lines = keys.map(([key, status]) => {
     let intro = [path, key].join('.');
     if (intro.startsWith('.')) intro = intro.slice(1);
-    if (status === 'deleted object' || status === 'deleted') {
-      return `Property '${intro}' was removed\n`;
-    } else if (status === 'added object' || status === 'added') {
-      return `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
-    } else if (status === 'object first' || status === 'object second' || status === 'changed') {
-      return `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
-    } else if (status === 'object') {
-      return makePlain(obj1[key], obj2[key], intro) + '\n';
-    }
+    let line;
+    
+    if (status.startsWith('deleted')) line = `Property '${intro}' was removed\n`;
+    if (status.startsWith('added') line = `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
+    if (status === 'object first' || status === 'object second' || status === 'changed') {
+      line = `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
+    } 
+    if (status === 'object') line = makePlain(obj1[key], obj2[key], intro) + '\n';
+    return line
   }).filter((line) => line !== undefined ? true : false);
   return lines.join('').trim();
 }
