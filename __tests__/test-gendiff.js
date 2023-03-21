@@ -188,7 +188,9 @@ test('check formatter json', () => {
     "host": new Value('host', 'not changed', 'hexlet.io', 'hexlet.io'),
     "proxy": new Value('proxy', 'removed', '123.234.53.22', undefined),
     "recursive": new Value('recursive', 'nested', {"a": new Value('a', 'not changed', 'aa', 'aa'), "b": new Value('b', 'removed', 'bb', undefined) }, undefined),
-    "recursive-2": new Value('recursive-2', 'added', 'undefined', {"str": "i am so tired of this"})
+    "recursive-2": new Value('recursive-2', 'added', undefined, {"str": "i am so tired of this"}),
+    "timeout": new Value('timeout', 'changed', 50, 20),
+    "verbose": new Value('verbose', 'added', undefined, true)
   };
   expect(makeJson(one, two)).toEqual(res);
 });

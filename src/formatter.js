@@ -98,6 +98,7 @@ export class Value {
 
 export function makeJson(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
+  console.log(keys);
   const result = keys.reduce((acc, [key, status]) => {
     if (status.startsWith('deleted')) {
       acc[key] = new Value(key, 'removed', _.cloneDeep(obj1[key]), undefined);
@@ -108,10 +109,10 @@ export function makeJson(obj1, obj2) {
     } else if (status.startsWith('object') || status === 'changed') {
       acc[key] = new Value(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     } else if (status === 'not changed') {
-      acc[key] = new Value(key, status, _.cloneDeep(obj1[key], _.cloneDeep(obj2[key])));
+      acc[key] = new Value(key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     }
     return acc;
   }, {});
-  // return JSON.stringify(result, '', 2);
+  console.log(result);
   return result;
 }
