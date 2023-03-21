@@ -98,7 +98,6 @@ export class Value {
 
 export function makeJson(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
-  console.log(keys);
   const result = keys.reduce((acc, [key, status]) => {
     if (status.startsWith('deleted')) {
       acc[key] = new Value(key, 'removed', _.cloneDeep(obj1[key]), undefined);
@@ -113,6 +112,5 @@ export function makeJson(obj1, obj2) {
     }
     return acc;
   }, {});
-  console.log(result);
   return result;
 }

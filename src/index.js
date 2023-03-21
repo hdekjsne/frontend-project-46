@@ -6,14 +6,14 @@ export default function gendiff(path1, path2, type) {
   const data1 = parse(path1);
   const data2 = parse(path2);
   switch(type) {
-    case 'stylish':
-      return makeStylish(2, data1, data2);
+    case 'json':
+      return makeJson(data1, data2);
       
     case 'plain':
       return makePlain(data1, data2);
       
     default:
-      return makeJson(data1, data2);
+      return makeStylish(2, data1, data2);
   }
 }
 
