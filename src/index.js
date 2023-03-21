@@ -17,4 +17,4 @@ export default function gendiff(path1, path2, type) {
   }
 }
 
-// console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json', 'json'));
+ console.log(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json', 'json'));
