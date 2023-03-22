@@ -1,30 +1,30 @@
-import { fullKeyListConstructor, checkType } from "../src/utils.js";
-import { parse } from "../src/parsers.js";
-import gendiff from '../src/index.js';
-import { makeObj, makeJson } from '../src/formatter.js';
 import * as fs from 'node:fs';
+import { fullKeyListConstructor, checkType } from '../src/utils.js';
+import { parse } from '../src/parsers.js';
+import gendiff from '../src/index.js';
+import { makeObj } from '../src/formatter.js';
 
 const file1 = {
-  "host": "hexlet.io",
-  "timeout": 50,
-  "proxy": "123.234.53.22",
-  "follow": false
-}
+  host: 'hexlet.io',
+  timeout: 50,
+  proxy: '123.234.53.22',
+  follow: false
+};
 
 const file2 = {
-  "timeout": 20,
-  "verbose": true,
-  "host": "hexlet.io"
-}
+  'timeout': 20,
+  'verbose': true,
+  'host': 'hexlet.io'
+};
 
 const file3 = {
-  "day": "Tue",
-  "weather": ["freezy", "snowy", "cloudy"],
-  "temperature": {
-    "min": -5,
-    "max": 1
+  'day': 'Tue',
+  'weather': ['freezy', 'snowy', 'cloudy'],
+  'temperature': {
+    'min': -5,
+    'max': 1
   }
-}
+};
 
 const example2 = `{
     common: {
@@ -69,7 +69,7 @@ const example2 = `{
         }
         fee: 100500
     }
-}`
+}`;
 
 test('check parser', () => {
   expect(parse('__fixtures__/file3.yml')).toEqual(file3);
@@ -85,11 +85,9 @@ test('check checkType', () => {
   expect(checkType({}, 'object')).toBe(true);
   expect(checkType([], 'object')).toBe(false);
   expect(checkType('a', 'object')).toBe(false);
-  
   expect(checkType([], 'array')).toBe(true);
   expect(checkType({}, 'array')).toBe(false);
   expect(checkType(1, 'array')).toBe(false);
-  
   expect(checkType(1, 'other')).toBe(true);
   expect(checkType([], 'other')).toBe(false);
   expect(checkType(Infinity, 'other')).toBe(true);
@@ -106,13 +104,13 @@ test('check formatter plain', () => {
 
 test('check formatter json', () => {
   const res = {
-    "follow": makeObj('follow', 'removed', false, undefined),
-    "host": makeObj('host', 'not changed', 'hexlet.io', 'hexlet.io'),
-    "proxy": makeObj('proxy', 'removed', '123.234.53.22', undefined),
-    "recursive": makeObj('recursive', 'nested', {"a": makeObj('a', 'not changed', 'aa', 'aa'), "b": makeObj('b', 'removed', 'bb', undefined) }, undefined),
-    "recursive-2": makeObj('recursive-2', 'added', undefined, {"str": "i am so tired of this"}),
-    "timeout": makeObj('timeout', 'changed', 50, 20),
-    "verbose": makeObj('verbose', 'added', undefined, true)
+    follow: makeObj('follow', 'removed', false, undefined),
+    host: makeObj('host', 'not changed', 'hexlet.io', 'hexlet.io'),
+    proxy: makeObj('proxy', 'removed', '123.234.53.22', undefined),
+    recursive: makeObj('recursive', 'nested', { a: makeObj('a', 'not changed', 'aa', 'aa'), b: makeObj('b', 'removed', 'bb', undefined) }, undefined),
+    recursive2: makeObj('recursive2', 'added', undefined, { str: "i am so tired of this" }),
+    timeout: makeObj('timeout', 'changed', 50, 20),
+    verbose: makeObj('verbose', 'added', undefined, true)
   };
   const result = JSON.stringify(res, '', 2);
   expect(gendiff('__fixtures__/file-recursive-3.json', '__fixtures__/file-recursive-4.json', 'json')).toEqual(result);

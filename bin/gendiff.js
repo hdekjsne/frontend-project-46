@@ -11,11 +11,9 @@ program
 
   .argument('<path1>', 'relative/absolute path to a first file')
   .argument('<path2>', 'relative/absolute path to a second file')
-  
-program
   .action((path1, path2) => {
     console.log(gendiff(path1, path2, program.opts().format));
-  })
+  });
 
 /* eslint-disable-next-line */
 program.parse()

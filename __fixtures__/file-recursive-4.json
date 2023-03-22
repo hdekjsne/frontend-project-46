@@ -5,7 +5,7 @@
   "recursive": {
     "a": "aa"
   },
-  "recursive-2": {
+  "recursive2": {
     "str": "i am so tired of this"
   }
 }

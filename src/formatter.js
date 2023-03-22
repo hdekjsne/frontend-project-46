@@ -1,11 +1,12 @@
-import { fullKeyListConstructor, rg, checkType, checkValueType } from './utils.js';
+/* eslint-disable-next-line */
 import _ from 'lodash';
+import { fullKeyListConstructor, rg, checkType, checkValueType } from './utils.js';
 
 function keysWithTags(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
   // структура: [ключ, тег]
+  let tag;
   const markedKeys = keys.map((key) => {
-    let tag;
     if (!_.isEqual(obj1[key], obj2[key])) tag = [key, 'changed'];
     if (_.isEqual(obj1[key], obj2[key])) tag = [key, 'not changed'];
     if (checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) tag = [key, 'object'];
@@ -16,14 +17,14 @@ function keysWithTags(obj1, obj2) {
     } 
     if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
       tag = checkType(obj2[key], 'object') ? [key, 'added object'] : [key, 'added'];
-    } 
+    }
     return tag;
   });
   return markedKeys;
 }
 /*
 - deleted object
-- deleted 
+- deleted
 - added object
 - added
 - object
@@ -35,8 +36,8 @@ function keysWithTags(obj1, obj2) {
 
 export function makeStylish(gap, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
+  let line;
   const objectGuts = keys.map(([key, status]) => {
-    let line;
     if (status === 'deleted object') line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
     if (status === 'deleted') line = `${rg(gap - 1)}- ${key}: ${data1[key]}`;
     if (status === 'added object') line = `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
@@ -52,7 +53,7 @@ export function makeStylish(gap, data1, data2 = data1) {
     if (status === 'not changed') line = `${rg(gap)}${key}: ${data1[key]}`;
     return line;
   });
-  return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim(); 
+  return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim();
 }
 
 export function makePlain(obj1, obj2, path = '') {
@@ -66,15 +67,20 @@ export function makePlain(obj1, obj2, path = '') {
     if (status.startsWith('added')) line = `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
     if (status === 'object first' || status === 'object second' || status === 'changed') {
       line = `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
-    } 
-    if (status === 'object') line = makePlain(obj1[key], obj2[key], intro) + '\n';
-    return line
-  }).filter((line) => line !== undefined ? true : false);
+    }
+    if (status === 'object') line = `${makePlain(obj1[key], obj2[key], intro)}\n`;
+    return line;
+  }).filter((line) => line !== undefined);
   return lines.join('').trim();
 }
 
 export function makeObj(key, type, value1, value2) {
-  return { "key": key, "type": type, "value1": value1, "value2": value2 };
+  return { 
+    key: key,
+    type: type,
+    value1: value1,
+    value2: value2 
+  };
 }
 
 export function makeJson(obj1, obj2) {
@@ -83,9 +89,9 @@ export function makeJson(obj1, obj2) {
     if (status.startsWith('deleted')) acc[key] = makeObj(key, 'removed', _.cloneDeep(obj1[key]), undefined);
     if (status.startsWith('added')) acc[key] = makeObj(key, 'added', undefined, _.cloneDeep(obj2[key]));
     if (status === 'object') acc[key] = makeObj(key, 'nested', makeJson(obj1[key], obj2[key]));
-    if (status === 'object first'|| status === 'object second' || status === 'changed') {
+    if (status === 'object first' || status === 'object second' || status === 'changed') {
       acc[key] = makeObj(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
-    } 
+    }
     if (status === 'not changed') acc[key] = makeObj(key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     return acc;
   }, {});

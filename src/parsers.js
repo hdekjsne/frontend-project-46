@@ -14,22 +14,16 @@ function jsonParser(path) {
   return result;
 }
 
-export function parse(path) {
+export default function parse(path) {
   const absPath = makeAbsolutePath(path);
-  let format = path.split('.');
-  format = format[format.length - 1];
-  let data;
+  const formats = path.split('.');
+  const format = formats[formats.length - 1];
   switch (format) {
     case 'yml':
-      data = yamlParser(absPath);
-      break;
-    
+      return yamlParser(absPath);
     case 'yaml':
-      data = yamlParser(absPath);
-      break;
-    
+      return yamlParser(absPath);
     default:
-      data = jsonParser(absPath);
+      return jsonParser(absPath);
   }
-  return data;
 }
