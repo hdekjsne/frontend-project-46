@@ -1,5 +1,5 @@
 // import * as fs from 'node:fs';
-import { default as parse } from './parsers.js';
+import parse from './parsers.js';
 import { makeStylish, makePlain, makeJson } from './formatter.js';
 
 export default function gendiff(path1, path2, type) {

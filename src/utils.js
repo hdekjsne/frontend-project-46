@@ -13,13 +13,8 @@ export function makeAbsolutePath(route) {
 export function fullKeyListConstructor(obj1, obj2) {
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  const commonKeysList = keys1.map((key) => key); // reduce
-  commonKeysList.push(keys2.map((key) => {
-    if (!keys1.includes(key)) {
-      return key;
-    }
-  }).filter((key) => key !== undefined));
-  return commonKeysList.flat().sort();
+  const commonKeys = _.sortBy(_.uniq(keys1.concat(keys2)));
+  return commonKeys;
 }
 
 export function checkType(value, type) {
