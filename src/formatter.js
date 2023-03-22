@@ -5,20 +5,19 @@ function keysWithTags(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
   // структура: [ключ, тег]
   const markedKeys = keys.map((key) => {
+    let tag;
+    if (!_.isEqual(obj1[key], obj2[key])) tag = [key, 'changed'];
+    if (_.isEqual(obj1[key], obj2[key])) tag = [key, 'not changed'];
+    if (checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) tag = [key, 'object'];
+    if (checkType(obj1[key], 'object') && !checkType(obj2[key], 'object')) tag = [key, 'object first'];
+    if (!checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) tag = [key, 'object second'];
     if (Object.hasOwn(obj1, key) && !Object.hasOwn(obj2, key)) {
-      return checkType(obj1[key], 'object') ? [key, 'deleted object'] : [key, 'deleted'];
-    } else if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
-      return checkType(obj2[key], 'object') ? [key, 'added object'] : [key, 'added'];
-    } else if (checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) {
-      return [key, 'object'];
-    } else if (checkType(obj1[key], 'object') && !checkType(obj2[key], 'object')) {
-      return [key, 'object first'];
-  } else if (!checkType(obj1[key], 'object') && checkType(obj2[key], 'object')) {
-      return [key, 'object second'];
-    } else if (!_.isEqual(obj1[key], obj2[key])) {
-      return [key, 'changed'];
-    }
-    return [key, 'not changed'];
+      tag = checkType(obj1[key], 'object') ? [key, 'deleted object'] : [key, 'deleted'];
+    } 
+    if (!Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key)) {
+      tag = checkType(obj2[key], 'object') ? [key, 'added object'] : [key, 'added'];
+    } 
+    return tag;
   });
   return markedKeys;
 }
@@ -38,6 +37,20 @@ export function makeStylish(gap, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
   const objectGuts = keys.map(([key, status]) => {
     let line;
+    if (status === 'deleted object') line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
+    if (status === 'deleted') line = `${rg(gap - 1)}- ${key}: ${data1[key]}`;
+    if (status === 'added object') line = `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+    if (status === 'added') line = `${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+    if (status === 'object') line = `${rg(gap)}${key}: ${makeStylish(gap + 2, data1[key], data2[key])}`;
+    if (status === 'object first') {
+      line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+    }
+    if (status === 'object second') {
+      line = `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+    }
+    if (status === 'changed') line = `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+    if (status === 'not changed') line = `${rg(gap)}${key}: ${data1[key]}`;
+    /*
     switch (status) {
       case 'deleted object':
         line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
@@ -74,6 +87,7 @@ export function makeStylish(gap, data1, data2 = data1) {
       default:
         return `${rg(gap)}${key}: ${data1[key]}`;
     }
+    */
     return line;
   });
   return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim(); 
