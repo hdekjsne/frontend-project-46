@@ -119,6 +119,9 @@ export class Value {
     this.value2 = value2;
   }
 }
+export function makeObj(key, type, value1, value2) {
+  return { "key": key, "type": type, "value1": value1, "value2": value }
+}
 
 export function makeJson(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
