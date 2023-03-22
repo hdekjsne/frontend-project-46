@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
 import { fullKeyListConstructor, checkType } from '../src/utils.js';
-import { parse } from '../src/parsers.js';
+import parse from '../src/parsers.js';
 import gendiff from '../src/index.js';
 import { makeObj } from '../src/formatter.js';
 
