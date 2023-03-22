@@ -1,0 +1,11 @@
+{
+  "timeout": 20,
+  "verbose": true,
+  "host": "hexlet.io",
+  "recursive": {
+    "a": "aa"
+  },
+  "recursive-2": {
+    "str": "i am so tired of this"
+  }
+}

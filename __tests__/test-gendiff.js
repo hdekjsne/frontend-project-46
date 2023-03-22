@@ -105,27 +105,6 @@ test('check formatter plain', () => {
 });
 
 test('check formatter json', () => {
-  const one = {
-    "host": "hexlet.io",
-    "timeout": 50,
-    "proxy": "123.234.53.22",
-    "follow": false,
-    "recursive": {
-      "a": "aa",
-      "b": "bb"
-    }
-  }
-  const two = {
-    "timeout": 20,
-    "verbose": true,
-    "host": "hexlet.io",
-    "recursive": {
-      "a": "aa"
-    },
-    "recursive-2": {
-      "str": "i am so tired of this"
-    }
-  }
   const res = {
     "follow": makeObj('follow', 'removed', false, undefined),
     "host": makeObj('host', 'not changed', 'hexlet.io', 'hexlet.io'),
@@ -135,5 +114,6 @@ test('check formatter json', () => {
     "timeout": makeObj('timeout', 'changed', 50, 20),
     "verbose": makeObj('verbose', 'added', undefined, true)
   };
-  expect(makeJson(one, two)).toEqual(res);
+  const result = JSON.stringify(res, '', 2);
+  expect(gendiff('__fixtures__/file-recursive-3.json', '__fixtures__/file-recursive-4.json', 'json')).toEqual(result);
 });
