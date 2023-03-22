@@ -111,28 +111,20 @@ export function makePlain(obj1, obj2, path = '') {
   return lines.join('').trim();
 }
 
-export class Value {
-  constructor(key, type, value1, value2) {
-    this.key = key;
-    this.type = type;
-    this.value1 = value1;
-    this.value2 = value2;
-  }
-}
 export function makeObj(key, type, value1, value2) {
-  return { "key": key, "type": type, "value1": value1, "value2": value }
+  return { "key": key, "type": type, "value1": value1, "value2": value2 };
 }
 
 export function makeJson(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
   const result = keys.reduce((acc, [key, status]) => {
-    if (status.startsWith('deleted')) acc[key] = new Value(key, 'removed', _.cloneDeep(obj1[key]), undefined);
-    if (status.startsWith('added')) acc[key] = new Value(key, 'added', undefined, _.cloneDeep(obj2[key]));
-    if (status === 'object') acc[key] = new Value(key, 'nested', makeJson(obj1[key], obj2[key]));
+    if (status.startsWith('deleted')) acc[key] = makeObj(key, 'removed', _.cloneDeep(obj1[key]), undefined);
+    if (status.startsWith('added')) acc[key] = makeObj(key, 'added', undefined, _.cloneDeep(obj2[key]));
+    if (status === 'object') acc[key] = makeObj(key, 'nested', makeJson(obj1[key], obj2[key]));
     if (status === 'object first'|| status === 'object second' || status === 'changed') {
-      acc[key] = new Value(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
+      acc[key] = makeObj(key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     } 
-    if (status === 'not changed') acc[key] = new Value(key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
+    if (status === 'not changed') acc[key] = makeObj(key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key]));
     return acc;
   }, {});
   return result;
