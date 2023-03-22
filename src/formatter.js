@@ -50,44 +50,6 @@ export function makeStylish(gap, data1, data2 = data1) {
     }
     if (status === 'changed') line = `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
     if (status === 'not changed') line = `${rg(gap)}${key}: ${data1[key]}`;
-    /*
-    switch (status) {
-      case 'deleted object':
-        line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
-        break;
-        
-      case 'deleted':
-        line = `${rg(gap - 1)}- ${key}: ${data1[key]}`;
-        break;
-        
-      case 'added object':
-        line = `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
-        break;
-        
-      case 'added':
-        line = `${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-        break;
-        
-      case 'object':
-        line = `${rg(gap)}${key}: ${makeStylish(gap + 2, data1[key], data2[key])}`;
-        break;
-        
-      case 'object first':
-        line = `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-        break;
-        
-      case 'object second':
-        line = `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
-        break;
-        
-      case 'changed':
-        line = `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-        break;
-        
-      default:
-        return `${rg(gap)}${key}: ${data1[key]}`;
-    }
-    */
     return line;
   });
   return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim(); 
