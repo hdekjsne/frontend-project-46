@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import { fullKeyListConstructor, checkType } from '../src/utils.js';
 import parse from '../src/parsers.js';
 import gendiff from '../src/index.js';
-import { makeObj } from '../src/formatter.js';
+import { keysWithTags, makeObj } from '../src/formatter.js';
 
 const file1 = {
   host: 'hexlet.io',
@@ -76,8 +76,8 @@ test('check parser', () => {
 });
 
 test('check fullKeyListConstructor', () => {
-  expect(fullKeyListConstructor(file1, file2)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
-  expect(fullKeyListConstructor(file2, file1)).toEqual(['follow', 'host', 'proxy', 'timeout', 'verbose']);
+  expect(fullKeyListConstructor(file1, file2)).toEqual(['host', 'timeout', 'proxy', 'follow', 'verbose']);
+  expect(fullKeyListConstructor(file2, file1)).toEqual(['timeout', 'verbose', 'host', 'proxy','follow']);
   expect(fullKeyListConstructor([], [])).toEqual([]);
 });
 
@@ -93,6 +93,21 @@ test('check checkType', () => {
   expect(checkType(Infinity, 'other')).toBe(true);
 });
 
+test('check keysWithTags', () => {
+  const result = [
+    ['follow', 'deleted'],
+    ['host', 'not changed'],
+    ['proxy', 'deleted'],
+    ['recursive', 'object'],
+    ['recursive2', 'added object'],
+    ['timeout', 'changed'],
+    ['verbose', 'added']
+  ];
+  const obj1 = parse('__fixtures__/file-recursive-3.json');
+  const obj2 = parse('__fixtures__/file-recursive-4.json');
+  expect(keysWithTags(obj1, obj2)).toEqual(result);
+});
+
 test('check formatter stylish', () => {
   expect(gendiff('__fixtures__/file-recursive-1.json', '__fixtures__/file-recursive-2.json', 'stylish')).toEqual(example2);
 });
@@ -103,22 +118,12 @@ test('check formatter plain', () => {
 });
 
 test('check formatter json', () => {
-  /*
-  const res = {
-    follow: makeObj('follow', 'removed', false, undefined),
-    host: makeObj('host', 'not changed', 'hexlet.io', 'hexlet.io'),
-    proxy: makeObj('proxy', 'removed', '123.234.53.22', undefined),
-    recursive: makeObj('recursive', 'nested', { a: makeObj('a', 'not changed', 'aa', 'aa'), b: makeObj('b', 'removed', 'bb', undefined) }, undefined),
-    recursive2: makeObj('recursive2', 'added', undefined, { str: 'i am so tired of this' }),
-    timeout: makeObj('timeout', 'changed', 50, 20),
-    verbose: makeObj('verbose', 'added', undefined, true),
-  };
-  */
-  const res = Object.assign({},
-    makeObj('follow', 'follow', 'removed', false, undefined),
+  const res = Object.assign({}, makeObj('follow', 'follow', 'removed', false, undefined),
     makeObj('host', 'host', 'not changed', 'hexlet.io', 'hexlet.io'),
     makeObj('proxy', 'proxy', 'removed', '123.234.53.22', undefined),
-    makeObj('recursive', 'recursive', 'nested', Object.assign({}, makeObj('a', 'a', 'not changed', 'aa', 'aa'), makeObj('b', 'b', 'removed', 'bb', undefined)), undefined),
+    makeObj('recursive', 'recursive', 'nested', { 
+    ...makeObj('a', 'a', 'not changed', 'aa', 'aa'), 
+    ...makeObj('b', 'b', 'removed', 'bb', undefined), }, undefined),
     makeObj('recursive2', 'recursive2', 'added', undefined, { str: 'i am so tired of this' }),
     makeObj('timeout', 'timeout', 'changed', 50, 20),
     makeObj('verbose', 'verbose', 'added', undefined, true),
