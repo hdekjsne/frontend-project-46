@@ -118,14 +118,14 @@ test('check formatter plain', () => {
 });
 
 test('check formatter json', () => {
-  const res = { 
+  const res = {
     ...makeObj('follow', 'follow', 'removed', false, undefined),
     ...makeObj('host', 'host', 'not changed', 'hexlet.io', 'hexlet.io'),
     ...makeObj('proxy', 'proxy', 'removed', '123.234.53.22', undefined),
     ...makeObj('recursive', 'recursive', 'nested', {
       ...makeObj('a', 'a', 'not changed', 'aa', 'aa'),
-      ...makeObj('b', 'b', 'removed', 'bb', undefined)
-      }, undefined),
+      ...makeObj('b', 'b', 'removed', 'bb', undefined),
+    }, undefined),
     ...makeObj('recursive2', 'recursive2', 'added', undefined, { str: 'i am so tired of this' }),
     ...makeObj('timeout', 'timeout', 'changed', 50, 20),
     ...makeObj('verbose', 'verbose', 'added', undefined, true),

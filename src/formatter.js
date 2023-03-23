@@ -99,9 +99,9 @@ export function makeJson(obj1, obj2) {
     if (status === 'object first' || status === 'object second' || status === 'changed') {
       return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
     }
-    return { 
-      ...acc, 
-      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])), 
+    return {
+      ...acc,
+      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])),
     };
   }, {});
   return result;
