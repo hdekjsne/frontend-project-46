@@ -15,12 +15,12 @@ export function keysWithTags(obj1, obj2) {
   });
   const taggedOthers = others.map((key) => {
     if (!Object.hasOwn(obj2, key)) return [key, 'deleted'];
-    if (!Object.hasOwn(obj1, key)) return [key,'added'];
+    if (!Object.hasOwn(obj1, key)) return [key, 'added'];
     if (!_.isEqual(obj1[key], obj2[key])) return [key, 'changed'];
     return [key, 'not changed'];
   });
   const common = taggedObjects.concat(taggedOthers);
-  const sorted = _.sortBy(common, ([key, status]) => key);
+  const sorted = _.sortBy(common, (arr) => arr[0]);
   return sorted;
 }
 
@@ -80,7 +80,7 @@ export function makeObj(bigK, key, type, value1, value2) {
       type,
       value1,
       value2,
-    }
+    },
   };
 }
 
@@ -88,18 +88,21 @@ export function makeJson(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
   const result = keys.reduce((acc, [key, status]) => {
     if (status.startsWith('deleted')) {
-      return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined), };
+      return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
     }
     if (status.startsWith('added')) {
-      return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])), };
+      return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])) };
     }
     if (status === 'object') {
-      return { ...acc, ...makeObj(key, key, 'nested', makeJson(obj1[key], obj2[key])), };
+      return { ...acc, ...makeObj(key, key, 'nested', makeJson(obj1[key], obj2[key])) };
     }
     if (status === 'object first' || status === 'object second' || status === 'changed') {
-      return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])), };
+      return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
     }
-    return { ...acc, ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])), };
+    return { 
+      ...acc, 
+      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])), 
+    };
   }, {});
   return result;
 }

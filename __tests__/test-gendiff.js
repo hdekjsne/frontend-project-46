@@ -77,7 +77,7 @@ test('check parser', () => {
 
 test('check fullKeyListConstructor', () => {
   expect(fullKeyListConstructor(file1, file2)).toEqual(['host', 'timeout', 'proxy', 'follow', 'verbose']);
-  expect(fullKeyListConstructor(file2, file1)).toEqual(['timeout', 'verbose', 'host', 'proxy','follow']);
+  expect(fullKeyListConstructor(file2, file1)).toEqual(['timeout', 'verbose', 'host', 'proxy', 'follow']);
   expect(fullKeyListConstructor([], [])).toEqual([]);
 });
 
@@ -101,7 +101,7 @@ test('check keysWithTags', () => {
     ['recursive', 'object'],
     ['recursive2', 'added object'],
     ['timeout', 'changed'],
-    ['verbose', 'added']
+    ['verbose', 'added'],
   ];
   const obj1 = parse('__fixtures__/file-recursive-3.json');
   const obj2 = parse('__fixtures__/file-recursive-4.json');
@@ -118,16 +118,18 @@ test('check formatter plain', () => {
 });
 
 test('check formatter json', () => {
-  const res = Object.assign({}, makeObj('follow', 'follow', 'removed', false, undefined),
-    makeObj('host', 'host', 'not changed', 'hexlet.io', 'hexlet.io'),
-    makeObj('proxy', 'proxy', 'removed', '123.234.53.22', undefined),
-    makeObj('recursive', 'recursive', 'nested', { 
-    ...makeObj('a', 'a', 'not changed', 'aa', 'aa'), 
-    ...makeObj('b', 'b', 'removed', 'bb', undefined), }, undefined),
-    makeObj('recursive2', 'recursive2', 'added', undefined, { str: 'i am so tired of this' }),
-    makeObj('timeout', 'timeout', 'changed', 50, 20),
-    makeObj('verbose', 'verbose', 'added', undefined, true),
-  );
+  const res = { 
+    ...makeObj('follow', 'follow', 'removed', false, undefined),
+    ...makeObj('host', 'host', 'not changed', 'hexlet.io', 'hexlet.io'),
+    ...makeObj('proxy', 'proxy', 'removed', '123.234.53.22', undefined),
+    ...makeObj('recursive', 'recursive', 'nested', {
+      ...makeObj('a', 'a', 'not changed', 'aa', 'aa'),
+      ...makeObj('b', 'b', 'removed', 'bb', undefined)
+      }, undefined),
+    ...makeObj('recursive2', 'recursive2', 'added', undefined, { str: 'i am so tired of this' }),
+    ...makeObj('timeout', 'timeout', 'changed', 50, 20),
+    ...makeObj('verbose', 'verbose', 'added', undefined, true),
+  };
   const result = JSON.stringify(res, '', 2);
   expect(gendiff('__fixtures__/file-recursive-3.json', '__fixtures__/file-recursive-4.json', 'json')).toEqual(result);
 });
