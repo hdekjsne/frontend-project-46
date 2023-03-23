@@ -2,7 +2,7 @@ gendiff:
 	node bin/gendiff.js
 
 lint:
-	npx eslint bin/gendiff.js src/index.js src/utils.js
+	npx eslint bin/gendiff.js src/*
 
 test:
 	npx jest
