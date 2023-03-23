@@ -7,21 +7,15 @@ export function keysWithTags(obj1, obj2) {
   const objects = keys.filter((key) => checkType(obj1[key], 'object') || checkType(obj2[key], 'object'));
   const others = keys.filter((key) => !checkType(obj1[key], 'object') && !checkType(obj2[key], 'object'));
   const taggedObjects = objects.map((key) => {
-    if (!Object.hasOwn(obj2, key)) {
-      return [key, 'deleted object'];
-    } else if (!Object.hasOwn(obj1, key)) {
-      return [key, 'added object'];
-    } else if (!checkType(obj2[key], 'object')) {
-      return [key, 'object first'];
-    } else if (!checkType(obj1[key], 'object')) {
-      return [key, 'object second'];
-    }
+    if (!Object.hasOwn(obj2, key)) return [key, 'deleted object'];
+    if (!Object.hasOwn(obj1, key)) return [key, 'added object'];
+    if (!checkType(obj2[key], 'object')) return [key, 'object first'];
+    if (!checkType(obj1[key], 'object')) return [key, 'object second'];
     return [key, 'object'];
   });
   const taggedOthers = others.map((key) => {
-    if (!Object.hasOwn(obj2, key)) {
-      return [key, 'deleted'];
-    } else if (!Object.hasOwn(obj1, key)) {
+    if (!Object.hasOwn(obj2, key)) return [key, 'deleted'];
+    if (!Object.hasOwn(obj1, key)) {
       return [key, 'added'];
     }
     if (!_.isEqual(obj1[key], obj2[key])) {
