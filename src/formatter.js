@@ -67,6 +67,7 @@ export function plain(obj1, obj2, path = '') {
   const keys = keysWithTags(obj1, obj2);
   const lines = keys.map(([key, status]) => {
     const intro = ([path, key].join('.').startsWith('.')) ? [path, key].join('.').slice(1) : [path, key].join('.');
+    /*
     if (status.startsWith('deleted')) {
       return `Property '${intro}' was removed\n`;
     } else if (status.startsWith('added')) {
@@ -77,6 +78,23 @@ export function plain(obj1, obj2, path = '') {
       return `${plain(obj1[key], obj2[key], intro)}\n`;
     }
     return undefined;
+    */
+    switch (status) {
+      case 'deleted object':
+      case 'deleted':
+        return `Property '${intro}' was removed\n`;
+      case 'added object':
+      case 'added':
+        return `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
+      case 'object first':
+      case 'object second':
+      case 'changed':
+        return `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
+      case 'object':
+        return `${plain(obj1[key], obj2[key], intro)}\n`;
+      default:
+        return undefined;
+    }
   }).filter((line) => line !== undefined);
   return lines.join('').trim();
 }
@@ -95,6 +113,7 @@ export function makeObj(bigK, key, type, value1, value2) {
 export function json(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
   const result = keys.reduce((acc, [key, status]) => {
+    /*
     if (status.startsWith('deleted')) {
       return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
     } else if (status.startsWith('added')) {
@@ -108,6 +127,26 @@ export function json(obj1, obj2) {
       ...acc,
       ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])),
     };
+    */
+    switch (status) {
+      case 'deleted object':
+      case 'deleted':
+        return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
+      case 'added object':
+      case 'added':
+        return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])) };
+      case 'object':
+        return { ...acc, ...makeObj(key, key, 'nested', json(obj1[key], obj2[key])) };
+      case 'object first':
+      case 'object second':
+      case 'changed':
+        return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
+      default:
+        return {
+      ...acc,
+      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])),
+    };
+    }
   }, {});
   return result;
 }
