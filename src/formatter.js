@@ -43,6 +43,7 @@ export function keysWithTags(obj1, obj2) {
 export function makeStylish(gap, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
   const objectGuts = keys.map(([key, status]) => {
+    /*
     if (status === 'deleted object') return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
     if (status === 'deleted') return `${rg(gap - 1)}- ${key}: ${data1[key]}`;
     if (status === 'added object') return `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
@@ -56,6 +57,27 @@ export function makeStylish(gap, data1, data2 = data1) {
     }
     if (status === 'changed') return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
     return `${rg(gap)}${key}: ${data1[key]}`;
+    */
+    switch (status) {
+      case 'deleted object':
+        return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
+      case 'deleted':
+        return `${rg(gap - 1)}- ${key}: ${data1[key]}`;
+      case 'added object':
+        return `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+      case 'added':
+        return `${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+      case 'object':
+        return `${rg(gap)}${key}: ${makeStylish(gap + 2, data1[key], data2[key])}`;
+      case 'object first':
+        return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+      case 'object second':
+        return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+      case 'changed':
+        return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+      default:
+        return `${rg(gap)}${key}: ${data1[key]}`;
+    }
   });
   return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim();
 }
