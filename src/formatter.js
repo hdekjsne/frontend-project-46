@@ -1,23 +1,23 @@
 import _ from 'lodash';
 /* eslint-disable-next-line */
-import { fullKeyListConstructor, rg, checkType, checkValueType } from './utils.js';
+import { fullKeyListConstructor, rg, checkType, checkVT } from './utils.js';
 
 export function keysWithTags(obj1, obj2) {
   const keys = fullKeyListConstructor(obj1, obj2);
-  const objects = keys.filter((key) => checkType(obj1[key], 'object') || checkType(obj2[key], 'object'));
-  const others = keys.filter((key) => !checkType(obj1[key], 'object') && !checkType(obj2[key], 'object'));
-  const taggedObjects = objects.map((key) => {
-    if (!Object.hasOwn(obj2, key)) return [key, 'deleted object'];
-    if (!Object.hasOwn(obj1, key)) return [key, 'added object'];
-    if (!checkType(obj2[key], 'object')) return [key, 'object first'];
-    if (!checkType(obj1[key], 'object')) return [key, 'object second'];
-    return [key, 'object'];
+  const objects = keys.filter((k) => checkType(obj1[k], 'object') || checkType(obj2[k], 'object'));
+  const others = keys.filter((k) => !checkType(obj1[k], 'object') && !checkType(obj2[k], 'object'));
+  const taggedObjects = objects.map((k) => {
+    if (!Object.hasOwn(obj2, k)) return [k, 'deleted object'];
+    if (!Object.hasOwn(obj1, k)) return [k, 'added object'];
+    if (!checkType(obj2[k], 'object')) return [k, 'object first'];
+    if (!checkType(obj1[k], 'object')) return [k, 'object second'];
+    return [k, 'object'];
   });
-  const taggedOthers = others.map((key) => {
-    if (!Object.hasOwn(obj2, key)) return [key, 'deleted'];
-    if (!Object.hasOwn(obj1, key)) return [key, 'added'];
-    if (!_.isEqual(obj1[key], obj2[key])) return [key, 'changed'];
-    return [key, 'not changed'];
+  const taggedOthers = others.map((k) => {
+    if (!Object.hasOwn(obj2, k)) return [k, 'deleted'];
+    if (!Object.hasOwn(obj1, k)) return [k, 'added'];
+    if (!_.isEqual(obj1[k], obj2[k])) return [k, 'changed'];
+    return [k, 'not changed'];
   });
   const common = taggedObjects.concat(taggedOthers);
   const sorted = _.sortBy(common, (arr) => arr[0]);
@@ -38,26 +38,26 @@ export function keysWithTags(obj1, obj2) {
 
 export function stylish(g, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
-  const objectGuts = keys.map(([key, status]) => {
+  const objectGuts = keys.map(([k, status]) => {
     switch (status) {
       case 'deleted object':
-        return `${rg(g - 1)}- ${key}: ${stylish(g + 2, data1[key])}`;
+        return `${rg(g - 1)}- ${k}: ${stylish(g + 2, data1[k])}`;
       case 'deleted':
-        return `${rg(g - 1)}- ${key}: ${data1[key]}`;
+        return `${rg(g - 1)}- ${k}: ${data1[k]}`;
       case 'added object':
-        return `${rg(g - 1)}+ ${key}: ${stylish(g + 2, data2[key])}`;
+        return `${rg(g - 1)}+ ${k}: ${stylish(g + 2, data2[k])}`;
       case 'added':
-        return `${rg(g - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}+ ${k}: ${data2[k]}`;
       case 'object':
-        return `${rg(g)}${key}: ${stylish(g + 2, data1[key], data2[key])}`;
+        return `${rg(g)}${k}: ${stylish(g + 2, data1[k], data2[k])}`;
       case 'object first':
-        return `${rg(g - 1)}- ${key}: ${stylish(g + 2, data1[key])}\n${rg(g - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}- ${k}: ${stylish(g + 2, data1[k])}\n${rg(g - 1)}+ ${k}: ${data2[k]}`;
       case 'object second':
-        return `${rg(g - 1)}- ${key}: ${data1[key]}\n${rg(g - 1)}+ ${key}: ${stylish(g + 2, data2[key])}`;
+        return `${rg(g - 1)}- ${k}: ${data1[k]}\n${rg(g - 1)}+ ${k}: ${stylish(g + 2, data2[k])}`;
       case 'changed':
-        return `${rg(g - 1)}- ${key}: ${data1[key]}\n${rg(g - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}- ${k}: ${data1[k]}\n${rg(g - 1)}+ ${k}: ${data2[k]}`;
       default:
-        return `${rg(g)}${key}: ${data1[key]}`;
+        return `${rg(g)}${k}: ${data1[k]}`;
     }
   });
   return `{\n${objectGuts.join('\n')}\n${rg(g - 2)}}\n`.trim();
@@ -65,33 +65,21 @@ export function stylish(g, data1, data2 = data1) {
 
 export function plain(obj1, obj2, path = '') {
   const keys = keysWithTags(obj1, obj2);
-  const lines = keys.map(([key, status]) => {
-    const intro = ([path, key].join('.').startsWith('.')) ? [path, key].join('.').slice(1) : [path, key].join('.');
-    /*
-    if (status.startsWith('deleted')) {
-      return `Property '${intro}' was removed\n`;
-    } else if (status.startsWith('added')) {
-      return `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
-    } else if (status === 'object first' || status === 'object second' || status === 'changed') {
-      return `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
-    } else if (status === 'object') {
-      return `${plain(obj1[key], obj2[key], intro)}\n`;
-    }
-    return undefined;
-    */
+  const lines = keys.map(([k, status]) => {
+    const intro = ([path, k].join('.').startsWith('.')) ? [path, k].join('.').slice(1) : [path, k].join('.');
     switch (status) {
       case 'deleted object':
       case 'deleted':
         return `Property '${intro}' was removed\n`;
       case 'added object':
       case 'added':
-        return `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
+        return `Property '${intro}' was added with value: ${checkVT(obj2[k])}\n`;
       case 'object first':
       case 'object second':
       case 'changed':
-        return `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
+        return `Property '${intro}' was updated. From ${checkVT(obj1[k])} to ${checkVT(obj2[k])}\n`;
       case 'object':
-        return `${plain(obj1[key], obj2[key], intro)}\n`;
+        return `${plain(obj1[k], obj2[k], intro)}\n`;
       default:
         return undefined;
     }
@@ -112,40 +100,25 @@ export function makeObj(bigK, key, type, value1, value2) {
 
 export function json(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
-  const result = keys.reduce((acc, [key, status]) => {
-    /*
-    if (status.startsWith('deleted')) {
-      return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
-    } else if (status.startsWith('added')) {
-      return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])) };
-    } else if (status === 'object') {
-      return { ...acc, ...makeObj(key, key, 'nested', json(obj1[key], obj2[key])) };
-    } else if (status === 'object first' || status === 'object second' || status === 'changed') {
-      return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
-    }
-    return {
-      ...acc,
-      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])),
-    };
-    */
+  const result = keys.reduce((acc, [k, status]) => {
     switch (status) {
       case 'deleted object':
       case 'deleted':
-        return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
+        return { ...acc, ...makeObj(k, k, 'removed', _.cloneDeep(obj1[k]), undefined) };
       case 'added object':
       case 'added':
-        return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])) };
+        return { ...acc, ...makeObj(k, k, 'added', undefined, _.cloneDeep(obj2[k])) };
       case 'object':
-        return { ...acc, ...makeObj(key, key, 'nested', json(obj1[key], obj2[key])) };
+        return { ...acc, ...makeObj(k, k, 'nested', json(obj1[k], obj2[k])) };
       case 'object first':
       case 'object second':
       case 'changed':
-        return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
+        return { ...acc, ...makeObj(k, k, 'changed', _.cloneDeep(obj1[k]), _.cloneDeep(obj2[k])) };
       default:
         return {
-      ...acc,
-      ...makeObj(key, key, status, _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])),
-    };
+          ...acc,
+          ...makeObj(k, k, status, _.cloneDeep(obj1[k]), _.cloneDeep(obj2[k])),
+        };
     }
   }, {});
   return result;

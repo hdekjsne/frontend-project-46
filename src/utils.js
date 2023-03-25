@@ -25,7 +25,7 @@ export function checkType(value, type) {
   return false;
 }
 
-export function checkValueType(value) {
+export function checkVT(value) {
   if (typeof value === 'string') return `'${value}'`;
   if (checkType(value, 'object')) return '[complex value]';
   return value;
