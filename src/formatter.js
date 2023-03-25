@@ -15,12 +15,8 @@ export function keysWithTags(obj1, obj2) {
   });
   const taggedOthers = others.map((key) => {
     if (!Object.hasOwn(obj2, key)) return [key, 'deleted'];
-    if (!Object.hasOwn(obj1, key)) {
-      return [key, 'added'];
-    }
-    if (!_.isEqual(obj1[key], obj2[key])) {
-      return [key, 'changed'];
-    }
+    if (!Object.hasOwn(obj1, key)) return [key, 'added'];
+    if (!_.isEqual(obj1[key], obj2[key])) return [key, 'changed'];
     return [key, 'not changed'];
   });
   const common = taggedObjects.concat(taggedOthers);
@@ -40,60 +36,46 @@ export function keysWithTags(obj1, obj2) {
 - not changed
 */
 
-export function makeStylish(gap, data1, data2 = data1) {
+export function stylish(g, data1, data2 = data1) {
   const keys = keysWithTags(data1, data2);
   const objectGuts = keys.map(([key, status]) => {
-    /*
-    if (status === 'deleted object') return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
-    if (status === 'deleted') return `${rg(gap - 1)}- ${key}: ${data1[key]}`;
-    if (status === 'added object') return `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
-    if (status === 'added') return `${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-    if (status === 'object') return `${rg(gap)}${key}: ${makeStylish(gap + 2, data1[key], data2[key])}`;
-    if (status === 'object first') {
-      return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-    }
-    if (status === 'object second') {
-      return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
-    }
-    if (status === 'changed') return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
-    return `${rg(gap)}${key}: ${data1[key]}`;
-    */
     switch (status) {
       case 'deleted object':
-        return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}`;
+        return `${rg(g - 1)}- ${key}: ${stylish(g + 2, data1[key])}`;
       case 'deleted':
-        return `${rg(gap - 1)}- ${key}: ${data1[key]}`;
+        return `${rg(g - 1)}- ${key}: ${data1[key]}`;
       case 'added object':
-        return `${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+        return `${rg(g - 1)}+ ${key}: ${stylish(g + 2, data2[key])}`;
       case 'added':
-        return `${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}+ ${key}: ${data2[key]}`;
       case 'object':
-        return `${rg(gap)}${key}: ${makeStylish(gap + 2, data1[key], data2[key])}`;
+        return `${rg(g)}${key}: ${stylish(g + 2, data1[key], data2[key])}`;
       case 'object first':
-        return `${rg(gap - 1)}- ${key}: ${makeStylish(gap + 2, data1[key])}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}- ${key}: ${stylish(g + 2, data1[key])}\n${rg(g - 1)}+ ${key}: ${data2[key]}`;
       case 'object second':
-        return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${makeStylish(gap + 2, data2[key])}`;
+        return `${rg(g - 1)}- ${key}: ${data1[key]}\n${rg(g - 1)}+ ${key}: ${stylish(g + 2, data2[key])}`;
       case 'changed':
-        return `${rg(gap - 1)}- ${key}: ${data1[key]}\n${rg(gap - 1)}+ ${key}: ${data2[key]}`;
+        return `${rg(g - 1)}- ${key}: ${data1[key]}\n${rg(g - 1)}+ ${key}: ${data2[key]}`;
       default:
-        return `${rg(gap)}${key}: ${data1[key]}`;
+        return `${rg(g)}${key}: ${data1[key]}`;
     }
   });
-  return `{\n${objectGuts.join('\n')}\n${rg(gap - 2)}}\n`.trim();
+  return `{\n${objectGuts.join('\n')}\n${rg(g - 2)}}\n`.trim();
 }
 
-export function makePlain(obj1, obj2, path = '') {
+export function plain(obj1, obj2, path = '') {
   const keys = keysWithTags(obj1, obj2);
   const lines = keys.map(([key, status]) => {
     const intro = ([path, key].join('.').startsWith('.')) ? [path, key].join('.').slice(1) : [path, key].join('.');
-    if (status.startsWith('deleted')) return `Property '${intro}' was removed\n`;
-    if (status.startsWith('added')) {
+    if (status.startsWith('deleted')) {
+      return `Property '${intro}' was removed\n`;
+    } else if (status.startsWith('added')) {
       return `Property '${intro}' was added with value: ${checkValueType(obj2[key])}\n`;
-    }
-    if (status === 'object first' || status === 'object second' || status === 'changed') {
+    } else if (status === 'object first' || status === 'object second' || status === 'changed') {
       return `Property '${intro}' was updated. From ${checkValueType(obj1[key])} to ${checkValueType(obj2[key])}\n`;
+    } else if (status === 'object') {
+      return `${plain(obj1[key], obj2[key], intro)}\n`;
     }
-    if (status === 'object') return `${makePlain(obj1[key], obj2[key], intro)}\n`;
     return undefined;
   }).filter((line) => line !== undefined);
   return lines.join('').trim();
@@ -110,19 +92,16 @@ export function makeObj(bigK, key, type, value1, value2) {
   };
 }
 
-export function makeJson(obj1, obj2) {
+export function json(obj1, obj2) {
   const keys = keysWithTags(obj1, obj2);
   const result = keys.reduce((acc, [key, status]) => {
     if (status.startsWith('deleted')) {
       return { ...acc, ...makeObj(key, key, 'removed', _.cloneDeep(obj1[key]), undefined) };
-    }
-    if (status.startsWith('added')) {
+    } else if (status.startsWith('added')) {
       return { ...acc, ...makeObj(key, key, 'added', undefined, _.cloneDeep(obj2[key])) };
-    }
-    if (status === 'object') {
-      return { ...acc, ...makeObj(key, key, 'nested', makeJson(obj1[key], obj2[key])) };
-    }
-    if (status === 'object first' || status === 'object second' || status === 'changed') {
+    } else if (status === 'object') {
+      return { ...acc, ...makeObj(key, key, 'nested', json(obj1[key], obj2[key])) };
+    } else if (status === 'object first' || status === 'object second' || status === 'changed') {
       return { ...acc, ...makeObj(key, key, 'changed', _.cloneDeep(obj1[key]), _.cloneDeep(obj2[key])) };
     }
     return {
