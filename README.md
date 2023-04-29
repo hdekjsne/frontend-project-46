@@ -1,6 +1,6 @@
 # gendiff
 Student-project at [Hexlet](https://ru.hexlet.io). 
-Gendiff compares to json/yaml files and shows a difference between them.
+Gendiff compares two json/yaml files and shows a difference between them.
 
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/hdekjsne/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/hdekjsne/frontend-project-46/actions)
