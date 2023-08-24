@@ -21,7 +21,7 @@ gendiff supports 3 formats.
 #### stylish (default)
 `gendiff -f stylish` or just `gendiff` with no specified format-option.  
   
-In this mode gendiff bulds a json-like string, in which all the changed keys are represented with '+' and '-' signs.  
+In this mode gendiff builds a json-like string, in which all the changed keys are represented with '+' and '-' signs.  
 `+ key: value` - added.  
 `- key: value` - removed.  
 `- key: old-value\n+ key: new-value` - changed.  
